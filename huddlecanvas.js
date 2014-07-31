@@ -5,17 +5,13 @@ HuddleCanvas = function(computerVisionServer, computerVisionPort, huddleName, im
         this.huddle = Huddle.client(huddleName);
         this.huddle.connect(computerVisionServer, computerVisionPort);
         sessionServer = computerVisionServer + computerVisionPort;
-        console.log("smi");
 
     });
-    console.log("smi again");
 
     this.layers = [];
     imgSrcPath = imgSrc;
     PanPosition = new Meteor.Collection('panPosition');
 
-    console.log(PanPosition);
-    console.log("Load imgSrc: " + imgSrcPath);
 
     this.loadCanvas();
 }
@@ -44,7 +40,6 @@ HuddleCanvas.prototype.loadCanvas = function() {
         //get the viewport size
         var windowWidth = $(window).width();
         var windowHeight = $(window).height();
-        console.log(windowWidth + " " + windowHeight);
 
         //Stores the unique mongo ID from the PanPosition collection of this session's offset values
         var sessionOffsetId = "";
@@ -79,7 +74,6 @@ HuddleCanvas.prototype.loadCanvas = function() {
         var img = document.createElement('img');
         img.src = imgSrcPath;
 
-        console.log("imgSrc: " + imgSrcPath);
 
         //get width and height after image loaded
         img.onload = function() {
@@ -335,7 +329,7 @@ HuddleCanvas.prototype.loadCanvas = function() {
         //Prevents elastic scrolling on iOS
         //stolen from https://gist.github.com/amolk/1599412
         document.body.addEventListener('touchmove', function(event) {
-            //console.log(event.source);
+        //console.log(event.source);
             event.preventDefault();
         }, false);
 
