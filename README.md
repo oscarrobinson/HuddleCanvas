@@ -19,7 +19,7 @@ To create a project using HuddleCanvas:<br>
 `$ mrt add huddle`<br>
 `$ mrt add hammer`<br>
 
-##Using HuddleCanvas
+##Using HuddleCanvas - The Basics
 HuddleCanvas adds its HTML code to a div with the tag `huddle-canvas-container`, so your main HTML document should look something like this:
 ```html
 <body>
@@ -37,6 +37,8 @@ if (Meteor.isClient) {
 
 ```
 
+This creates an explorable canvas with the image you linked to as the background.
+
 So as an example using the Huddle-Orbiter
 
 ```javascript
@@ -44,3 +46,29 @@ var canvas = new HuddleCanvas("huddle-orbiter.proxemicinteractions.org", 60000, 
 ```
 
 For instructions on setting up the Huddle-Orbiter (a simulator for Huddle), go [here](https://github.com/raedle/meteor-huddle/blob/master/README.md)
+
+##Using HuddleCanvas - Adding Layers
+
+An explorable image is cool but what if you want to add some information to be overlaid on the image.  Well this is where HuddleCanvas layers come in.  Adding a layer to your canvas is as simple as adding a div inside the huddle-canvas-container div:
+
+```html
+	  <div id="huddle-canvas-container">
+	  	<div id="testlayer">
+	  		<div id="someLayerContent">Some Text</div>
+	  	</div>
+	  </div>
+```
+
+The testLayer div will be automatically resized by the API to fit the canvas (but bear in mind depending on its aspect ratio, your background image may not cover the whole canvas).
+
+You can style and position any children of testLayer as you would any other element.  You can also style testLayer's appearance in any way you want (except for variables like width and height, if you change these it could cause problems).
+
+You can add as many layers as you want to your canvas and as they're simply HTML elements, you can add scripts to these elements as you normally would.  Want to make a layer with D3 visualisations? It's easy with HuddleCanvas.
+
+##Using HuddleCanvas - Background Image
+
+In The Basics, we saw how you can create a canvas with a background image.  However, this is completely optional.  If you just want your own hardcoded layers, simply omit a background image source when creating the canvas:
+
+```javascript
+        var canvas = new HuddleCanvas([PATH TO YOUR HUDDLE SERVER], [PORT FOR YOUR HUDDLE SERVER], "HuddleName");
+```
