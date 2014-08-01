@@ -31,7 +31,7 @@ Then in the corresponding JavaScript for the page:
 ```javascript
 if (Meteor.isClient) {
     $(document).ready(function() {
-        var canvas = new HuddleCanvas([PATH TO YOUR HUDDLE SERVER], [PORT FOR YOUR HUDDLE SERVER], "HuddleName", [PATH TO YOUR CANVAS IMAGE]);
+        var canvas = new HuddleCanvas([PATH TO YOUR HUDDLE SERVER], [PORT FOR YOUR HUDDLE SERVER], "HuddleName", [ENABLE DEBUG?],[PATH TO YOUR CANVAS IMAGE]);
     });
 }
 
@@ -39,10 +39,12 @@ if (Meteor.isClient) {
 
 This creates an explorable canvas with the image you linked to as the background.
 
+Enable debug is a boolean, inserting true shows a debug box on screen.
+
 So as an example using the Huddle-Orbiter
 
 ```javascript
-var canvas = new HuddleCanvas("huddle-orbiter.proxemicinteractions.org", 60000, "HuddleName", "../../images/map_small.png");
+var canvas = new HuddleCanvas("huddle-orbiter.proxemicinteractions.org", 60000, "HuddleName", false, "../../images/map_small.png");
 ```
 
 For instructions on setting up the Huddle-Orbiter (a simulator for Huddle), go [here](https://github.com/raedle/meteor-huddle/blob/master/README.md)
@@ -70,5 +72,23 @@ You can add as many layers as you want to your canvas and as they're simply HTML
 In The Basics, we saw how you can create a canvas with a background image.  However, this is completely optional.  If you just want your own hardcoded layers, simply omit a background image source when creating the canvas:
 
 ```javascript
-        var canvas = new HuddleCanvas([PATH TO YOUR HUDDLE SERVER], [PORT FOR YOUR HUDDLE SERVER], "HuddleName");
+        var canvas = new HuddleCanvas([PATH TO YOUR HUDDLE SERVER], [PORT FOR YOUR HUDDLE SERVER], "HuddleName", false);
+```
+
+##Using HuddleCanvas - The Debug Box
+
+As you don't have access to the JS console on mobile devices when testing with the Huddle, it's useful to be able to display debug information on screen.  That's why HuddleCanvas has this functionality built in.
+
+To enable the Debug box, set the showDebug parameter to true when initialising your HuddleCanvas:
+```javascript
+        var canvas = new HuddleCanvas([PATH TO YOUR HUDDLE SERVER], [PORT FOR YOUR HUDDLE SERVER], "HuddleName", true,
+        [PATH TO YOUR CANVAS IMAGE]);
+```
+
+To add content to the debug box there are two methods, debugWrite() and debugAppend().  debugWrite overwrites the current content of the debug box with the string you pass it and debugAppend adds the string you pass to the current content in the debug box.  These functions automatically add new content as a new paragraph in the debug box.
+
+Example: 
+```javascript
+canvas.debugWrite("currentPosition: "+ xPos);
+canvas.debugAppend("This appears underneath");
 ```
