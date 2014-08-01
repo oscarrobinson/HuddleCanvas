@@ -69,55 +69,58 @@ loadCanvas = function(canvas) {
 
 
         //load the image we're going to use as the background so we can get its width and height
-        var img = document.createElement('img');
-        img.src = imgSrcPath;
+        if (imgSrcPath) {
+            var img = document.createElement('img');
+            img.src = imgSrcPath;
 
 
-        //get width and height after image loaded
-        img.onload = function() {
-            canvas.imageWidth = (img.width);
-            canvas.imageHeight = (img.height);
+            //get width and height after image loaded
+            img.onload = function() {
+                canvas.imageWidth = (img.width);
+                canvas.imageHeight = (img.height);
 
 
-            //set the metadata, used to scale image on retina devices
-            window.peepholeMetadata = {
-                canvasWidth: canvas.imageWidth,
-                canvasHeight: canvas.imageHeight,
-                scaleX: 1.0,
-                scaleY: 1.0
-            };
-            window.canvasScaleFactor = devicePixelRatio;
+                //set the metadata, used to scale image on retina devices
+                window.peepholeMetadata = {
+                    canvasWidth: canvas.imageWidth,
+                    canvasHeight: canvas.imageHeight,
+                    scaleX: 1.0,
+                    scaleY: 1.0
+                };
 
-            //Sizings following are initial, the canvases are resized to fit video feed area later
+                //Sizings following are initial, the canvases are resized to fit video feed area later
 
-            //set up container with correct width and height
-            $("#huddle-canvas-container").css('width', canvas.imageWidth);
-            $("#huddle-canvas-container").css('height', canvas.imageHeight);
-            $("#huddle-canvas-container").css('position', 'fixed');
+                //set up container with correct width and height
+                $("#huddle-canvas-container").css('width', canvas.imageWidth);
+                $("#huddle-canvas-container").css('height', canvas.imageHeight);
 
 
-            //set up the div with correct width and height for image
-            var backgroundDiv = document.createElement('div');
-            backgroundDiv.id = "huddle-canvas-background";
-            document.getElementById('huddle-canvas-container').appendChild(backgroundDiv);
-            $("#huddle-canvas-background").css('width', canvas.imageWidth);
-            $("#huddle-canvas-background").css('height', canvas.imageHeight);
-            $("#huddle-canvas-background").css('background-repeat', 'no-repeat');
-            $("#huddle-canvas-background").css('z-index', 1);
-            $("#huddle-canvas-background").css('background-image', 'url(' + imgSrcPath + ')');
-            $("#huddle-canvas-background").css('position', 'absolute');
-            $("#huddle-canvas-background").css('background-position', 'center');
-            $("#huddle-canvas-background").css('background-size', 'contain');
 
-            $('#huddle-canvas-container').children().css({
-                'width': canvas.imageWidth,
-                'height': canvas.imageHeight,
-                'position': 'absolute'
-            });
+                //set up the div with correct width and height for image
+                var backgroundDiv = document.createElement('div');
+                backgroundDiv.id = "huddle-canvas-background";
+                document.getElementById('huddle-canvas-container').appendChild(backgroundDiv);
+                $("#huddle-canvas-background").css('width', canvas.imageWidth);
+                $("#huddle-canvas-background").css('height', canvas.imageHeight);
+                $("#huddle-canvas-background").css('background-repeat', 'no-repeat');
+                $("#huddle-canvas-background").css('z-index', 1);
+                $("#huddle-canvas-background").css('background-image', 'url(' + imgSrcPath + ')');
+                $("#huddle-canvas-background").css('position', 'absolute');
+                $("#huddle-canvas-background").css('background-position', 'center');
+                $("#huddle-canvas-background").css('background-size', 'contain');
+
+                $('#huddle-canvas-container').children().css({
+                    'width': canvas.imageWidth,
+                    'height': canvas.imageHeight,
+                });
+            }
 
 
         }
 
+        window.canvasScaleFactor = devicePixelRatio;
+
+        $("#huddle-canvas-container").css('position', 'fixed');
 
         //layout preparations, body is just size of viewport then we offset the canvases to give the illusion of movement
         $("body").css('min-height', $(window).height() + "px");
@@ -202,11 +205,13 @@ loadCanvas = function(canvas) {
             $("#huddle-canvas-container").css('height', feedHeight);
             $("#huddle-canvas-background").css('width', feedWidth);
             $("#huddle-canvas-background").css('height', feedHeight);
+            $("#huddle-canvas-background").css('position', 'absolute');
 
 
             $('#huddle-canvas-container').children().css({
                 'width': feedWidth,
-                'height': feedHeight
+                'height': feedHeight,
+                'position': 'absolute'
             });
 
 
@@ -229,8 +234,8 @@ loadCanvas = function(canvas) {
             //uodate the metadata to allow proper viewing on iOS devices
 
             window.peepholeMetadata = {
-                canvasWidth: canvas.imageWidth,
-                canvasHeight: canvas.imageHeight,
+                canvasWidth: feedWidth,
+                canvasHeight: feedHeight,
                 scaleX: 1 / (ratio.X / window.canvasScaleFactor),
                 scaleY: 1 / (ratio.Y / window.canvasScaleFactor)
             };
