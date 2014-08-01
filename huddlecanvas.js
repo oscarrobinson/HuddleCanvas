@@ -1,4 +1,4 @@
-HuddleCanvas = function(computerVisionServer, computerVisionPort, huddleName, imgSrc) {
+HuddleCanvas = function(computerVisionServer, computerVisionPort, huddleName, showDebug, imgSrc) {
 
 
     $(function() {
@@ -12,6 +12,7 @@ HuddleCanvas = function(computerVisionServer, computerVisionPort, huddleName, im
     PanPosition = new Meteor.Collection('panPosition');
     this.imageWidth = 0;
     this.imageHeight = 0;
+    this.showDebugBox = showDebug;
     loadCanvas(this);
 }
 
@@ -19,21 +20,29 @@ loadCanvas = function(canvas) {
 
     $(document).ready(function() {
 
-        /*  //choose whether to show the debug box or not
-        var showDebugBox = true;
 
-        if (showDebugBox) {
-            $("#debug-box").css('display', 'inline');
+        //choose whether to show the debug box or not
+
+        if (canvas.showDebugBox) {
+            $('body').prepend("<div id='debug-box'>DEBUG MESSAGES WILL APPEAR HERE</div>");
+            $("#debug-box").css({
+                'height': '200px',
+                'width': '300px',
+                'padding': '5px',
+                'background-color': 'rgba(0, 0, 0, 0.5)',
+                'font-size': '12px',
+                'color': 'white',
+                'text-align': 'left',
+                'font-weight': 'bold',
+                'font-family': 'sans-serif',
+                'position': 'fixed',
+                'top': 10,
+                'left': 10,
+                'z-index': 1000,
+                'border-radius': '10px'
+            });
         }
 
-        //some nice helper functions for debugging
-        debugWrite = function(message) {
-            document.getElementById('debug-box').innerHTML = "<p>" + message + "</p>";
-        }
-
-        debugAppend = function(message) {
-            document.getElementById('debug-box').innerHTML += "<p>" + message + "</p>";
-        } */
 
         //get the viewport size
         var windowWidth = $(window).width();
@@ -337,6 +346,17 @@ loadCanvas = function(canvas) {
             window.onresize();
         });
         /////////////////////////////////////////////// */
+    });
+}
+
+HuddleCanvas.prototype.debugWrite = function(message) {
+    $(document).ready(function() {
+        document.getElementById('debug-box').innerHTML = "<p>" + message + "</p>";
+    });
+}
+HuddleCanvas.prototype.debugAppend = function(message) {
+    $(document).ready(function() {
+        document.getElementById('debug-box').innerHTML += "<p>" + message + "</p>";
     });
 }
 
