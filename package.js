@@ -8,4 +8,7 @@ Package.on_use(function(api) {
     api.add_files([
         'huddlecanvas.js'
     ], 'client');
+    api.add_files([
+        'positioncollection.js'
+    ], ['server', 'client']);
 });

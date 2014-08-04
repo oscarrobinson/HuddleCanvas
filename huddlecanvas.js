@@ -20,7 +20,7 @@ var HuddleCanvas = (function() {
         huddle = Huddle.client(huddleName);
         huddle.connect(computerVisionServer, computerVisionPort);
         sessionServer = computerVisionServer + computerVisionPort;
-        PanPosition = new Meteor.Collection('panPosition');
+        PanPosition = HuddleCanvasCollections.getPanPositions();
         showDebugBox = showDebug;
         imgSrcPath = imgSrc;
         loadCanvas();
@@ -153,7 +153,6 @@ var HuddleCanvas = (function() {
 
             //Called on receiving of Huddle API data to move the canvases
             function moveCanvas(id, x, y, scaleX, scaleY, rotation, ratioX, ratioY, offsetX, offsetY, inPanOffsetX, inPanOffsetY) {
-
                 //work out some values for canvas movement
                 var deviceCenterToDeviceLeft = ((feedWidth / ratioX) / 2);
                 var deviceCenterToDeviceTop = ((feedHeight / ratioY) / 2);
@@ -163,8 +162,21 @@ var HuddleCanvas = (function() {
                     var sessionDoc = PanPosition.findOne({
                         sessionId: sessionServer
                     });
+
+                    //if we have a document storing our PanPositions then get its id
                     if (sessionDoc) {
                         sessionOffsetId = sessionDoc._id;
+                    }
+                    //if we don't, create one
+                    else {
+                        sessionOffsetId = PanPosition.insert({
+                            sessionId: sessionServer,
+                            offsetX: 0,
+                            offsetY: 0,
+                            inPanOffsetX: 0,
+                            inPanOffsetY: 0
+                        });
+
                     }
 
                     if (sessionOffsetId !== "") {
@@ -206,6 +218,7 @@ var HuddleCanvas = (function() {
 
             //Adjusts canvas postition on receive of new device position data
             huddle.on("proximity", function(data) {
+                $('#huddle-glyph-container').css('z-index', 1001);
 
                 //Extract the raw API data
                 var loc = data.Location;
@@ -270,94 +283,99 @@ var HuddleCanvas = (function() {
 
             });
 
-            /*   //---------------TOUCH DRAG STUFF---------------------
-        var canvas = document.getElementById("huddle-canvas-container");
-        var hammertime = new Hammer(canvas);
+            //---------------TOUCH DRAG STUFF---------------------
+            var canvas = document.getElementById("huddle-canvas-container");
+            var hammertime = new Hammer(canvas);
 
-        hammertime.on('pan', function(ev) {
-            //console.log(ev.direction);
-            ev.preventDefault()
-            //console.log(ev);
-            //console.log("deltaX: " + ev.deltaX + "|| deltaY: " + ev.deltaY);
-            var angle = currentAngle * Math.PI / 180.0;
-            var dx = ev.deltaX;
-            var dy = ev.deltaY;
-            inPanOffsetX = (Math.cos(angle) * dx) - (Math.sin(angle) * dy);
-            inPanOffsetY = (Math.sin(angle) * dx) + (Math.cos(angle) * dy);
+            hammertime.on('pan', function(ev) {
+                //console.log(ev.direction);
+                ev.preventDefault()
+                //console.log(ev);
+                //console.log("deltaX: " + ev.deltaX + "|| deltaY: " + ev.deltaY);
+                var angle = currentAngle * Math.PI / 180.0;
+                var dx = ev.deltaX;
+                var dy = ev.deltaY;
+                inPanOffsetX = (Math.cos(angle) * dx) - (Math.sin(angle) * dy);
+                inPanOffsetY = (Math.sin(angle) * dx) + (Math.cos(angle) * dy);
 
-            //do we have offsets for our session?, if not create a new doc for them
-            if (sessionOffsetId === "") {
-                var doc = PanPosition.findOne({
-                    sessionId: sessionServer
-                });
-                if (!doc) {
-                    sessionOffsetId = PanPosition.insert({
+                //do we have offsets for our session?, if not create a new doc for them
+                if (sessionOffsetId === "") {
+                    var doc = PanPosition.findOne({
                         sessionId: sessionServer
                     });
-                } else {
-                    sessionOffsetId = doc._id;
+                    if (!doc) {
+                        sessionOffsetId = PanPosition.insert({
+                            sessionId: sessionServer,
+                            offsetX: 0,
+                            offsetY: 0,
+                            inPanOffsetX: 0,
+                            inPanOffsetY: 0
+                        });
+                    } else {
+                        sessionOffsetId = doc._id;
+                    }
+                    //console.log(sessionOffsetId);
                 }
-                //console.log(sessionOffsetId);
-            }
 
-            //update our panning position
-            PanPosition.update(sessionOffsetId, {
-                $set: {
-                    inPanOffsetX: inPanOffsetX,
-                    inPanOffsetY: inPanOffsetY
+                //update our panning position
+                PanPosition.update(sessionOffsetId, {
+                    $set: {
+                        inPanOffsetX: inPanOffsetX,
+                        inPanOffsetY: inPanOffsetY
+                    }
+                });
+
+                //console.log(PanPosition.findOne(sessionOffsetId));
+
+                if (ev.isFinal) {
+                    //update our current offset to mirror others in the huddle
+                    if (sessionOffsetId !== "") {
+                        var offsets = PanPosition.findOne(sessionOffsetId);
+
+                        if (offsets) {
+                            offsetX = offsets.offsetX;
+                            offsetY = offsets.offsetY;
+                        }
+
+
+                    }
+
+                    //then add the result of our pan
+                    offsetX += inPanOffsetX;
+                    offsetY += inPanOffsetY;
+                    inPanOffsetX = 0;
+                    inPanOffsetY = 0;
+
+
+                    //update our final offset and set the current panning position to 0
+                    PanPosition.update(sessionOffsetId, {
+                        $set: {
+                            inPanOffsetX: 0,
+                            inPanOffsetY: 0,
+                            offsetX: offsetX,
+                            offsetY: offsetY
+                        }
+                    })
+
                 }
             });
 
-            //console.log(PanPosition.findOne(sessionOffsetId));
 
-            if (ev.isFinal) {
-                //update our current offset to mirror others in the huddle
-                if (sessionOffsetId !== "") {
-                    var offsets = PanPosition.findOne(sessionOffsetId);
+            //Prevents elastic scrolling on iOS
+            //stolen from https://gist.github.com/amolk/1599412
+            document.body.addEventListener('touchmove', function(event) {
+                //console.log(event.source);
+                event.preventDefault();
+            }, false);
 
-                    if (offsets) {
-                        offsetX = offsets.offsetX;
-                        offsetY = offsets.offsetY;
-                    }
-
-
-                }
-
-                //then add the result of our pan
-                offsetX += inPanOffsetX;
-                offsetY += inPanOffsetY;
-                inPanOffsetX = 0;
-                inPanOffsetY = 0;
-
-                //update our final offset and set the current panning position to 0
-                PanPosition.update(sessionOffsetId, {
-                    $set: {
-                        inPanOffsetX: 0,
-                        inPanOffsetY: 0,
-                        offsetX: offsetX,
-                        offsetY: offsetY
-                    }
-                })
-
+            window.onresize = function() {
+                $(document.body).width(window.innerWidth).height(window.innerHeight);
             }
-        });
 
-
-        //Prevents elastic scrolling on iOS
-        //stolen from https://gist.github.com/amolk/1599412
-        document.body.addEventListener('touchmove', function(event) {
-        //console.log(event.source);
-            event.preventDefault();
-        }, false);
-
-        window.onresize = function() {
-            $(document.body).width(window.innerWidth).height(window.innerHeight);
-        }
-
-        $(function() {
-            window.onresize();
-        });
-        /////////////////////////////////////////////// */
+            $(function() {
+                window.onresize();
+            });
+            ///////////////////////////////////////////////
         });
 
     }
