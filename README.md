@@ -30,9 +30,7 @@ HuddleCanvas adds its HTML code to a div with the tag `huddle-canvas-container`,
 Then in the corresponding JavaScript for the page:
 ```javascript
 if (Meteor.isClient) {
-    $(document).ready(function() {
-        var canvas = HuddleCanvas.create([PATH TO YOUR HUDDLE SERVER], [PORT FOR YOUR HUDDLE SERVER], "HuddleName", [ENABLE DEBUG?],[PATH TO YOUR CANVAS IMAGE]);
-    });
+	var canvas = HuddleCanvas.create([PATH TO YOUR HUDDLE SERVER], [PORT FOR YOUR HUDDLE SERVER], "HuddleName", [ENABLE DEBUG?],[PATH TO YOUR CANVAS IMAGE]);
 }
 
 ```
