@@ -30,7 +30,7 @@ HuddleCanvas adds its HTML code to a div with the tag `huddle-canvas-container`,
 Then in the corresponding JavaScript for the page:
 ```javascript
 if (Meteor.isClient) {
-	var canvas = HuddleCanvas.create([PATH TO YOUR HUDDLE SERVER], [PORT FOR YOUR HUDDLE SERVER], "HuddleName", [ENABLE DEBUG?],[PATH TO YOUR CANVAS IMAGE]);
+	var canvas = HuddleCanvas.create([PATH TO YOUR HUDDLE SERVER], [PORT FOR YOUR HUDDLE SERVER], "HuddleName");
 }
 
 ```
@@ -42,7 +42,7 @@ Enable debug is a boolean, inserting true shows a debug box on screen.
 So as an example using the Huddle-Orbiter
 
 ```javascript
-var canvas = HuddleCanvas.create("huddle-orbiter.proxemicinteractions.org", 60000, "HuddleName", false, "../../images/map_small.png");
+var canvas = HuddleCanvas.create("huddle-orbiter.proxemicinteractions.org", 60000, "HuddleName");
 ```
 
 For instructions on setting up the Huddle-Orbiter (a simulator for Huddle), go [here](https://github.com/raedle/meteor-huddle/blob/master/README.md)
@@ -52,11 +52,11 @@ For instructions on setting up the Huddle-Orbiter (a simulator for Huddle), go [
 An explorable image is cool but what if you want to add some information to be overlaid on the image.  Well this is where HuddleCanvas layers come in.  Adding a layer to your canvas is as simple as adding a div inside the huddle-canvas-container div:
 
 ```html
-	  <div id="huddle-canvas-container">
-	  	<div id="testlayer">
-	  		<div id="someLayerContent">Some Text</div>
-	  	</div>
-	  </div>
+<div id="huddle-canvas-container">
+	<div id="testlayer">
+		<div id="someLayerContent">Some Text</div>
+	</div>
+</div>
 ```
 
 The testLayer div will be automatically resized by the API to fit the canvas (but bear in mind depending on its aspect ratio, your background image may not cover the whole canvas).
@@ -67,20 +67,22 @@ You can add as many layers as you want to your canvas and as they're simply HTML
 
 ##Using HuddleCanvas - Background Image
 
-In The Basics, we saw how you can create a canvas with a background image.  However, this is completely optional.  If you just want your own hardcoded layers, simply omit a background image source when creating the canvas:
+When you create a canvas, you can add a background image which the user will be able to explore.  The background image is scaled to fit the desktop area available to Huddle.  To add a background image, we pass the create() function a settings object as the last parameter:
 
 ```javascript
-        var canvas = HuddleCanvas.create([PATH TO YOUR HUDDLE SERVER], [PORT FOR YOUR HUDDLE SERVER], "HuddleName", false);
+var canvas = HuddleCanvas.create([PATH TO YOUR HUDDLE SERVER], [PORT FOR YOUR HUDDLE SERVER], "HuddleName", {
+	backgroundImage: "path/to/image.png"
+});
 ```
 
 ##Using HuddleCanvas - The Debug Box
 
 As you don't have access to the JS console on mobile devices when testing with the Huddle, it's useful to be able to display debug information on screen.  That's why HuddleCanvas has this functionality built in.
-
-To enable the Debug box, set the showDebug parameter to true when creating your HuddleCanvas:
+To enable the Debug box, set the showDebugBox settings parameter to true when creating your canvas:
 ```javascript
-        var canvas = HuddleCanvas.create([PATH TO YOUR HUDDLE SERVER], [PORT FOR YOUR HUDDLE SERVER], "HuddleName", true,
-        [PATH TO YOUR CANVAS IMAGE]);
+var canvas = HuddleCanvas.create([PATH TO YOUR HUDDLE SERVER], [PORT FOR YOUR HUDDLE SERVER], "HuddleName", {
+	showDebugBox: true
+});
 ```
 
 To add content to the debug box there are two methods, debugWrite() and debugAppend().  debugWrite overwrites the current content of the debug box with the string you pass it and debugAppend adds the string you pass to the current content in the debug box.  These functions automatically add new content as a new paragraph in the debug box.
@@ -89,4 +91,25 @@ Example:
 ```javascript
 canvas.debugWrite("currentPosition: "+ xPos);
 canvas.debugAppend("This appears underneath");
+```
+
+##Using HuddleCanvas - Panning
+
+HuddleCanvas has built in touch panning of the canvas. This is mirrored across all devices in the Huddle as if they were one large screen.  <b>This is enabled by default.</b>  If you want to disable this, just say so when creating your canvas:
+```javascript
+var canvas = HuddleCanvas.create([PATH TO YOUR HUDDLE SERVER], [PORT FOR YOUR HUDDLE SERVER], "HuddleName", {
+	panningEnabled: false
+});
+```
+
+##Settings
+
+All the settings available to change when calling the create method are listed here along with their default values:
+
+```javascript
+{
+	panningEnabled: true,
+	backgroundImage: "",
+	showDebugBox: false
+}
 ```
