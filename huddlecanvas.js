@@ -23,14 +23,16 @@ var HuddleCanvas = (function() {
 
     function publicInit(computerVisionServer, computerVisionPort, huddleName, settingsParam) {
         huddle = Huddle.client(huddleName);
-        if (settingsParam.showDebugBox != undefined) {
-            settings.showDebugBox = settingsParam.showDebugBox;
-        }
-        if (settingsParam.backgroundImage != undefined) {
-            settings.imgSrcPath = settingsParam.backgroundImage;
-        }
-        if (settingsParam.panningEnabled != undefined) {
-            settings.panningEnabled = settingsParam.panningEnabled;
+        if (settingsParam != undefined) {
+            if (settingsParam.showDebugBox != undefined) {
+                settings.showDebugBox = settingsParam.showDebugBox;
+            }
+            if (settingsParam.backgroundImage != undefined) {
+                settings.imgSrcPath = settingsParam.backgroundImage;
+            }
+            if (settingsParam.panningEnabled != undefined) {
+                settings.panningEnabled = settingsParam.panningEnabled;
+            }
         }
         huddle.connect(computerVisionServer, computerVisionPort);
         sessionServer = computerVisionServer + computerVisionPort;
