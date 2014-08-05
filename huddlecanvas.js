@@ -43,6 +43,20 @@ var HuddleCanvas = (function() {
         return this;
     }
 
+    function applyAllBrowsers(element, action, parameters) {
+        var browserPrefixes = [
+            "-o-",
+            "-webkit-",
+            "-ms-",
+            "",
+            "-moz-"
+        ];
+        for (z = 0; z < browserPrefixes.length; z++) {
+            $(element).css(browserPrefixes[z] + action, parameters);
+        }
+
+    }
+
 
     function publicDebugWrite(message) {
         $(document).ready(function() {
@@ -128,6 +142,7 @@ var HuddleCanvas = (function() {
                         scaleX: 1.0,
                         scaleY: 1.0
                     };
+                    window.canvasScaleFactor = devicePixelRatio;
 
                     //Sizings following are initial, the canvases are resized to fit video feed area later
 
@@ -221,7 +236,7 @@ var HuddleCanvas = (function() {
 
                 //scale the canvas according to the device's size (ensures e.g iphone canvas is same physical size as surface pro canvas)
                 var scale = 'scale(' + scaleX + ',' + scaleY + ') ';
-                $(id).css('-webkit-transform', scale);
+                applyAllBrowsers(id, 'transform', scale);
 
                 //set the offset of the canvas so its physical position changes
                 $(id).css('top', tyd);
@@ -231,9 +246,9 @@ var HuddleCanvas = (function() {
                 //Handle the rotation of the canvas
                 var rotationX = -tx;
                 var rotationY = -ty;
-                $(id).css('-webkit-transform-origin', rotationX + 'px ' + rotationY + 'px');
+                applyAllBrowsers(id, 'transform-origin', rotationX + 'px ' + rotationY + 'px');
                 var rotate = 'rotate(' + (-rotation) + 'deg)';
-                $(id).css('-webkit-transform', rotate);
+                applyAllBrowsers(id, 'transform', rotate);
             }
 
 
@@ -290,8 +305,8 @@ var HuddleCanvas = (function() {
                 //uodate the metadata to allow proper viewing on iOS devices
 
                 window.peepholeMetadata = {
-                    canvasWidth: feedWidth,
-                    canvasHeight: feedHeight,
+                    //canvasWidth: feedWidth,
+                    //canvasHeight: feedHeight,
                     scaleX: 1 / (ratio.X / window.canvasScaleFactor),
                     scaleY: 1 / (ratio.Y / window.canvasScaleFactor)
                 };
@@ -321,6 +336,8 @@ var HuddleCanvas = (function() {
                     inPanOffsetX = (Math.cos(angle) * dx) - (Math.sin(angle) * dy);
                     inPanOffsetY = (Math.sin(angle) * dx) + (Math.cos(angle) * dy);
 
+                    publicDebugWrite(devicePixelRatio);
+
                     //do we have offsets for our session?, if not create a new doc for them
                     if (sessionOffsetId === "") {
                         var doc = PanPosition.findOne({
@@ -340,7 +357,8 @@ var HuddleCanvas = (function() {
                         //console.log(sessionOffsetId);
                     }
 
-                    //update our panning position
+
+
                     PanPosition.update(sessionOffsetId, {
                         $set: {
                             inPanOffsetX: inPanOffsetX,
@@ -368,6 +386,7 @@ var HuddleCanvas = (function() {
                         offsetY += inPanOffsetY;
                         inPanOffsetX = 0;
                         inPanOffsetY = 0;
+
 
 
                         //update our final offset and set the current panning position to 0
