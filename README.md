@@ -34,12 +34,9 @@ if (Meteor.isClient) {
 }
 
 ```
+This creates an empty explorable canvas.
 
-This creates an explorable canvas with the image you linked to as the background.
-
-Enable debug is a boolean, inserting true shows a debug box on screen.
-
-So as an example using the Huddle-Orbiter
+So as an example using the Huddle-Orbiter:
 
 ```javascript
 var canvas = HuddleCanvas.create("huddle-orbiter.proxemicinteractions.org", 60000, "HuddleName");
