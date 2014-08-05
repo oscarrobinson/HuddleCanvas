@@ -13,6 +13,8 @@ var HuddleCanvas = (function() {
     var feedWidth = 0;
     var feedHeight = 0;
 
+    var huddleContainerId = 'huddle-canvas-container';
+
 
     //set default values for settings
     var settings = {
@@ -130,15 +132,15 @@ var HuddleCanvas = (function() {
                     //Sizings following are initial, the canvases are resized to fit video feed area later
 
                     //set up container with correct width and height
-                    $("#huddle-canvas-container").css('width', imageWidth);
-                    $("#huddle-canvas-container").css('height', imageHeight);
+                    $("#" + huddleContainerId).css('width', imageWidth);
+                    $("#" + huddleContainerId).css('height', imageHeight);
 
 
 
                     //set up the div with correct width and height for image
                     var backgroundDiv = document.createElement('div');
                     backgroundDiv.id = "huddle-canvas-background";
-                    document.getElementById('huddle-canvas-container').appendChild(backgroundDiv);
+                    document.getElementById(huddleContainerId).appendChild(backgroundDiv);
                     $("#huddle-canvas-background").css('width', imageWidth);
                     $("#huddle-canvas-background").css('height', imageHeight);
                     $("#huddle-canvas-background").css('background-repeat', 'no-repeat');
@@ -148,7 +150,7 @@ var HuddleCanvas = (function() {
                     $("#huddle-canvas-background").css('background-position', 'center');
                     $("#huddle-canvas-background").css('background-size', 'contain');
 
-                    $('#huddle-canvas-container').children().css({
+                    $('#' + huddleContainerId).children().css({
                         'width': imageWidth,
                         'height': imageHeight,
                     });
@@ -159,7 +161,7 @@ var HuddleCanvas = (function() {
 
             window.canvasScaleFactor = devicePixelRatio;
 
-            $("#huddle-canvas-container").css('position', 'fixed');
+            $("#" + huddleContainerId).css('position', 'fixed');
 
             //layout preparations, body is just size of viewport then we offset the canvases to give the illusion of movement
             $("body").css('min-height', $(window).height() + "px");
@@ -255,14 +257,14 @@ var HuddleCanvas = (function() {
                 var feedAspectRatio = feedWidth / feedHeight;
 
                 //set width and height of canvases to correct values
-                $("#huddle-canvas-container").css('width', feedWidth);
-                $("#huddle-canvas-container").css('height', feedHeight);
+                $("#" + huddleContainerId).css('width', feedWidth);
+                $("#" + huddleContainerId).css('height', feedHeight);
                 $("#huddle-canvas-background").css('width', feedWidth);
                 $("#huddle-canvas-background").css('height', feedHeight);
                 $("#huddle-canvas-background").css('position', 'absolute');
 
 
-                $('#huddle-canvas-container').children().css({
+                $('#' + huddleContainerId).children().css({
                     'width': feedWidth,
                     'height': feedHeight,
                     'position': 'absolute'
@@ -296,7 +298,7 @@ var HuddleCanvas = (function() {
                 window.orientationDevice = angle;
 
                 //update the canvas position
-                moveCanvas("#huddle-canvas-container", x, y, scaleX, scaleY, angle, ratio.X, ratio.Y, offsetX, offsetY, inPanOffsetX, inPanOffsetY);
+                moveCanvas("#" + huddleContainerId, x, y, scaleX, scaleY, angle, ratio.X, ratio.Y, offsetX, offsetY, inPanOffsetX, inPanOffsetY);
 
 
 
@@ -305,7 +307,7 @@ var HuddleCanvas = (function() {
 
             //---------------TOUCH DRAG STUFF---------------------
             if (settings.panningEnabled === true) {
-                var canvas = document.getElementById("huddle-canvas-container");
+                var canvas = document.getElementById(huddleContainerId);
                 var hammertime = new Hammer(canvas);
 
                 hammertime.on('pan', function(ev) {
