@@ -13,27 +13,33 @@ var HuddleCanvas = (function() {
     var feedWidth = 0;
     var feedHeight = 0;
 
-    var huddleContainerId = 'huddle-canvas-container';
+    var huddleContainerId = "huddle-canvas-container";
 
 
     //set default values for settings
     var settings = {
         showDebugBox: false,
         panningEnabled: true,
-        imgSrcPath: ""
+        imgSrcPath: "",
+        layers: []
     }
 
     function publicInit(computerVisionServer, computerVisionPort, huddleName, settingsParam) {
         huddle = Huddle.client(huddleName);
         if (settingsParam != undefined) {
-            if (settingsParam.showDebugBox != undefined) {
+            if (settingsParam.showDebugBox !== undefined) {
                 settings.showDebugBox = settingsParam.showDebugBox;
             }
-            if (settingsParam.backgroundImage != undefined) {
+            if (settingsParam.backgroundImage !== undefined) {
                 settings.imgSrcPath = settingsParam.backgroundImage;
             }
-            if (settingsParam.panningEnabled != undefined) {
+            if (settingsParam.panningEnabled !== undefined) {
                 settings.panningEnabled = settingsParam.panningEnabled;
+            }
+            if (settingsParam.layers !== undefined) {
+                for (var u = 0; u < settingsParam.layers.length; u++) {
+                    settings.layers.push(settingsParam.layers[u]);
+                }
             }
         }
         huddle.connect(computerVisionServer, computerVisionPort);
@@ -41,6 +47,16 @@ var HuddleCanvas = (function() {
         PanPosition = HuddleCanvasCollections.getPanPositions();
         loadCanvas();
         return this;
+    }
+
+    function publicAddLayer(layerId) {
+        settings.layers.push(layerId);
+    }
+
+    function publicRemoveLayer(layerId) {
+        settings.layers = jQuery.grep(settings.layers, function(value) {
+            return value != layerId;
+        });
     }
 
     function applyAllBrowsers(element, action, parameters) {
@@ -156,8 +172,6 @@ var HuddleCanvas = (function() {
                     var backgroundDiv = document.createElement('div');
                     backgroundDiv.id = "huddle-canvas-background";
                     document.getElementById(huddleContainerId).appendChild(backgroundDiv);
-                    $("#huddle-canvas-background").css('width', imageWidth);
-                    $("#huddle-canvas-background").css('height', imageHeight);
                     $("#huddle-canvas-background").css('background-repeat', 'no-repeat');
                     $("#huddle-canvas-background").css('z-index', 1);
                     $("#huddle-canvas-background").css('background-image', 'url(' + settings.imgSrcPath + ')');
@@ -165,9 +179,24 @@ var HuddleCanvas = (function() {
                     $("#huddle-canvas-background").css('background-position', 'center');
                     $("#huddle-canvas-background").css('background-size', 'contain');
 
-                    $('#' + huddleContainerId).children().css({
+                    settings.layers.push("huddle-canvas-background");
+
+                    //get all the layers including background
+                    var children = $('#' + huddleContainerId).children()
+
+                    //set all layers to correct width/height, only show layers in the 'layers list'
+                    children.css({
                         'width': imageWidth,
                         'height': imageHeight,
+                        'position': 'absolute',
+                        'display': function() {
+                            for (c = 0; c < settings.layers.length; c++) {
+                                if (settings.layers[c] === this.id || this.id === "huddle-canvas-background") {
+                                    return 'inline'
+                                }
+                            }
+                            return 'none';
+                        }
                     });
                 }
 
@@ -274,18 +303,27 @@ var HuddleCanvas = (function() {
                 //set width and height of canvases to correct values
                 $("#" + huddleContainerId).css('width', feedWidth);
                 $("#" + huddleContainerId).css('height', feedHeight);
-                $("#huddle-canvas-background").css('width', feedWidth);
-                $("#huddle-canvas-background").css('height', feedHeight);
+
                 $("#huddle-canvas-background").css('position', 'absolute');
 
 
-                $('#' + huddleContainerId).children().css({
+                //get all the layers including background
+                var children = $('#' + huddleContainerId).children()
+
+                //set all layers to correct width/height, only show layers in the 'layers list'
+                children.css({
                     'width': feedWidth,
                     'height': feedHeight,
-                    'position': 'absolute'
+                    'position': 'absolute',
+                    'display': function() {
+                        for (c = 0; c < settings.layers.length; c++) {
+                            if (settings.layers[c] === this.id || this.id === "huddle-canvas-background") {
+                                return 'inline'
+                            }
+                        }
+                        return 'none';
+                    }
                 });
-
-
 
                 //work out aspect ratio of our image
                 var imageAspectRatio = imageWidth / imageHeight;
@@ -426,7 +464,9 @@ var HuddleCanvas = (function() {
     return {
         create: publicInit,
         debugAppend: publicDebugAppend,
-        debugWrite: publicDebugWrite
+        debugWrite: publicDebugWrite,
+        addLayer: publicAddLayer,
+        removeLayer: publicRemoveLayer
     }
 })();
 
