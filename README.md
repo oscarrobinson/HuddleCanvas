@@ -169,7 +169,7 @@ These functions allow you to prevent touch panning of the canvas under certain c
 
 Example of usage:
 ```javascript
-if([condition where touch panning disable]){
+if([condition where touch panning disabled]){
 	canvas.panLock();
 }
 else{
