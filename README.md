@@ -162,3 +162,18 @@ xOffset = offsets[0];
 yOffset = offsets[1];
 
 ```
+
+###panLock() and panUnlock()
+
+These functions allow you to prevent touch panning of the canvas under certain conditions.  Simply lock panning to prevent touch panning then unlock panning to reenable. 
+
+Example of usage:
+```javascript
+if([condition where touch panning disabled]){
+	canvas.panLock();
+}
+else{
+	canvas.panUnlock();
+}
+```
+
