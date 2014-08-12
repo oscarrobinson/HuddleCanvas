@@ -19,6 +19,9 @@ var HuddleCanvas = (function() {
     var coordX = 0;
     var coordY = 0;
 
+    //is panning allowed at this moment?
+    var panLocked = false;
+
 
     //set default values for settings
     var settings = {
@@ -65,6 +68,14 @@ var HuddleCanvas = (function() {
         settings.layers = jQuery.grep(settings.layers, function(value) {
             return value != layerId;
         });
+    }
+
+    function publicPanLock() {
+        panLocked = true;
+    }
+
+    function publicPanUnlock() {
+        panLocked = false;
     }
 
     function applyAllBrowsers(element, action, parameters) {
@@ -381,10 +392,13 @@ var HuddleCanvas = (function() {
                 var hammertime = new Hammer(canvas);
 
                 hammertime.on('pan', function(ev) {
-                    //console.log(ev.direction);
-                    ev.preventDefault()
-                    //console.log(ev);
-                    //console.log("deltaX: " + ev.deltaX + "|| deltaY: " + ev.deltaY);
+                    ev.preventDefault();
+
+                    //we don't pan if the pan lock is on
+                    if (panLocked) {
+                        return;
+                    }
+
                     var angle = currentAngle * Math.PI / 180.0;
                     var dx = ev.deltaX;
                     var dy = ev.deltaY;
@@ -484,7 +498,9 @@ var HuddleCanvas = (function() {
         debugWrite: publicDebugWrite,
         addLayer: publicAddLayer,
         removeLayer: publicRemoveLayer,
-        getOffsets: publicGetOffsets
+        getOffsets: publicGetOffsets,
+        panLock: publicPanLock,
+        panUnlock: publicPanUnlock
     }
 })();
 
