@@ -15,6 +15,10 @@ var HuddleCanvas = (function() {
 
     var huddleContainerId = "huddle-canvas-container";
 
+    //values to hold current total offset of canvas on device
+    var coordX = 0;
+    var coordY = 0;
+
 
     //set default values for settings
     var settings = {
@@ -47,6 +51,10 @@ var HuddleCanvas = (function() {
         PanPosition = HuddleCanvasCollections.getPanPositions();
         loadCanvas();
         return this;
+    }
+
+    function publicGetOffsets() {
+        return [coordX, coordY];
     }
 
     function publicAddLayer(layerId) {
@@ -260,14 +268,23 @@ var HuddleCanvas = (function() {
                 var tx = (-1 * x * feedWidth) + offsetX + inPanOffsetX;
                 var ty = (-1 * y * feedHeight) + offsetY + inPanOffsetY;
 
-                var txd = tx + deviceCenterToDeviceLeft;
-                var tyd = ty + deviceCenterToDeviceTop;
+                if (deviceCenterToDeviceLeft && deviceCenterToDeviceTop) {
+                    var txd = tx + deviceCenterToDeviceLeft;
+                    var tyd = ty + deviceCenterToDeviceTop;
+                } else {
+                    var txd = tx;
+                    var tyd = ty;
+                }
+
+
 
                 //scale the canvas according to the device's size (ensures e.g iphone canvas is same physical size as surface pro canvas)
                 var scale = 'scale(' + scaleX + ',' + scaleY + ') ';
                 applyAllBrowsers(id, 'transform', scale);
 
                 //set the offset of the canvas so its physical position changes
+                coordX = txd;
+                coordY = tyd;
                 $(id).css('top', tyd);
                 $(id).css('left', txd);
 
@@ -466,7 +483,8 @@ var HuddleCanvas = (function() {
         debugAppend: publicDebugAppend,
         debugWrite: publicDebugWrite,
         addLayer: publicAddLayer,
-        removeLayer: publicRemoveLayer
+        removeLayer: publicRemoveLayer,
+        getOffsets: publicGetOffsets
     }
 })();
 
