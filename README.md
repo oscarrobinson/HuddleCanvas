@@ -147,9 +147,9 @@ All the settings available to change when calling the create method are listed h
 }
 ```
 
-###Additional Functions
+##Additional Functions
 
-####getOffsets()
+###getOffsets()
 
 Returns the current canvas offsets taking into account the panning position and device position in the huddle.
 
