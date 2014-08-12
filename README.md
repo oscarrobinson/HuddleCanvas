@@ -146,3 +146,19 @@ All the settings available to change when calling the create method are listed h
 	layers: []
 }
 ```
+
+###Additional Functions
+
+####getOffsets()
+
+Returns the current canvas offsets taking into account the panning position and device position in the huddle.
+
+Returns an array [xOffset, yOffset]
+
+Example of usage:
+```javascript
+offsets = canvas.getOffsets();
+xOffset = offsets[0];
+yOffset = offsets[1];
+
+```
