@@ -185,8 +185,6 @@ var HuddleCanvas = (function() {
                     $("#" + huddleContainerId).css('width', imageWidth);
                     $("#" + huddleContainerId).css('height', imageHeight);
 
-
-
                     //set up the div with correct width and height for image
                     var backgroundDiv = document.createElement('div');
                     backgroundDiv.id = "huddle-canvas-background";
@@ -388,14 +386,14 @@ var HuddleCanvas = (function() {
 
             //---------------TOUCH DRAG STUFF---------------------
             if (settings.panningEnabled === true) {
-                var canvas = document.getElementById(huddleContainerId);
-                var hammertime = new Hammer(canvas);
+                var hammerCanvas = document.getElementById(huddleContainerId);
+                var hammertime = new Hammer(hammerCanvas);
 
                 hammertime.on('pan', function(ev) {
                     ev.preventDefault();
 
                     //we don't pan if the pan lock is on
-                    if (panLocked) {
+                    if (panLocked == true) {
                         return;
                     }
 
@@ -405,7 +403,6 @@ var HuddleCanvas = (function() {
                     inPanOffsetX = (Math.cos(angle) * dx) - (Math.sin(angle) * dy);
                     inPanOffsetY = (Math.sin(angle) * dx) + (Math.cos(angle) * dy);
 
-                    publicDebugWrite(devicePixelRatio);
 
                     //do we have offsets for our session?, if not create a new doc for them
                     if (sessionOffsetId === "") {
