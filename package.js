@@ -6,6 +6,7 @@ Package.on_use(function(api) {
     api.use('jquery', 'client');
     api.imply('jquery', 'client');
     api.add_files([
+        'hammer.js',
         'huddlecanvas.js'
     ], 'client');
     api.add_files([

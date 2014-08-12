@@ -6,7 +6,6 @@
     "version": "0.5.2",
     "git": "https://github.com/scarrobin/HuddleCanvas.git",
     "packages": {
-        "hammer": {},
         "huddle": {}
     }
 
