@@ -70,6 +70,10 @@ var HuddleCanvas = (function() {
         });
     }
 
+    function publicGetFeedSize() {
+        return [feedWidth, feedHeight];
+    }
+
     function publicPanLock() {
         panLocked = true;
     }
@@ -497,7 +501,8 @@ var HuddleCanvas = (function() {
         removeLayer: publicRemoveLayer,
         getOffsets: publicGetOffsets,
         panLock: publicPanLock,
-        panUnlock: publicPanUnlock
+        panUnlock: publicPanUnlock,
+        getFeedSize: publicGetFeedSize
     }
 })();
 
