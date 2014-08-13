@@ -208,7 +208,7 @@ var HuddleCanvas = (function() {
                         'position': 'absolute',
                         'display': function() {
                             for (c = 0; c < settings.layers.length; c++) {
-                                if (settings.layers[c] === this.id || this.id === "huddle-canvas-background") {
+                                if (settings.layers[c] === this.id || $(this).hasClass(settings.layers[c]) || this.id === "huddle-canvas-background") {
                                     return 'inline'
                                 }
                             }
@@ -343,7 +343,7 @@ var HuddleCanvas = (function() {
                     'position': 'absolute',
                     'display': function() {
                         for (c = 0; c < settings.layers.length; c++) {
-                            if (settings.layers[c] === this.id || this.id === "huddle-canvas-background") {
+                            if (settings.layers[c] === this.id || $(this).hasClass(settings.layers[c]) || this.id === "huddle-canvas-background") {
                                 return 'inline'
                             }
                         }
