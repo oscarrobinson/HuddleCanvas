@@ -22,13 +22,17 @@ var HuddleCanvas = (function() {
     //is panning allowed at this moment?
     var panLocked = false;
 
+    //holds whether this is the first time getting the feed info from huddle
+    var firstRun = true;
+
 
     //set default values for settings
     var settings = {
         showDebugBox: false,
         panningEnabled: true,
         imgSrcPath: "",
-        layers: []
+        layers: [],
+        callbacks: []
     }
 
     function publicInit(computerVisionServer, computerVisionPort, huddleName, settingsParam) {
@@ -46,6 +50,11 @@ var HuddleCanvas = (function() {
             if (settingsParam.layers !== undefined) {
                 for (var u = 0; u < settingsParam.layers.length; u++) {
                     settings.layers.push(settingsParam.layers[u]);
+                }
+            }
+            if (settingsParam.callbacks !== undefined) {
+                for (var u = 0; u < settingsParam.callbacks.length; u++) {
+                    settings.callbacks.push(settingsParam.callbacks[u]);
                 }
             }
         }
@@ -314,6 +323,7 @@ var HuddleCanvas = (function() {
 
             //Adjusts canvas postition on receive of new device position data
             huddle.on("proximity", function(data) {
+
                 $('#huddle-glyph-container').css('z-index', 1001);
 
                 //Extract the raw API data
@@ -335,6 +345,14 @@ var HuddleCanvas = (function() {
                 $("#" + huddleContainerId).css('height', feedHeight);
 
                 $("#huddle-canvas-background").css('position', 'absolute');
+
+                //do any callbacks passed to the canvas if first run
+                if (firstRun) {
+                    for (var x = 0; x < settings.callbacks.length; x++) {
+                        settings.callbacks[x]();
+                    }
+                    firstRun = false;
+                }
 
 
                 //get all the layers including background
