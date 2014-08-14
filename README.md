@@ -192,9 +192,11 @@ data.RgbImageToDisplayRatio.Y; //number of times device's screen fits in the hud
 
 ####getFeedSize()
 The size in CSS pixels of the camera feed from the HuddleCamera i.e how big the area of webpage viewable through the huddle is:
+```javascript
 var feedSize = canvas.getFeedSize();
 feedSize[0]; //x size
 feedSize[1]; //y size
+```
 
 
 ###Panning
