@@ -133,6 +133,22 @@ var canvas = HuddleCanvas.create([PATH TO YOUR HUDDLE SERVER], [PORT FOR YOUR HU
 });
 ```
 
+##Using HuddleCanvas - Callbacks
+
+You can pass callbacks to HuddleCanvas when you create a new instance, these will be excecuted once the canvas has fully loaded and is receiving proper information from the Huddle API.  You pass callbacks as an array of functions in the settings object so you can have more than one function if you wish.  The functions are executed in the order they appear in the array:
+```javascript
+canvas = HuddleCanvas.create([PATH TO YOUR HUDDLE SERVER], [PORT FOR YOUR HUDDLE SERVER], "HuddleName", {
+	callbacks:[
+		function(){
+			console.log("canvas loaded :)");
+		},
+		function(aParam){
+			console.log(canvas.getOffsets()[0]*aParam);
+		}
+	]
+});
+```
+
 ##Settings
 
 All the settings available to change when calling the create method are listed here along with their default values:
@@ -142,13 +158,16 @@ All the settings available to change when calling the create method are listed h
 	panningEnabled: true,
 	backgroundImage: "",
 	showDebugBox: false,
-	layers: []
+	layers: [],
+	callbacks: []
 }
 ```
 
 ##Additional Functions
 
-###getOffsets()
+###Getters
+
+####getOffsets()
 
 Returns the current canvas offsets taking into account the panning position and device position in the huddle.
 
@@ -159,10 +178,28 @@ Example of usage:
 offsets = canvas.getOffsets();
 xOffset = offsets[0];
 yOffset = offsets[1];
-
+```
+####getHuddleData()
+Returns all data received from the Huddle API:
+```javascript
+var data = canvas.getHuddleData();
+data.Location[0]; // x pos of device in huddle
+data.Location[1]; // y pos of device in huddle
+data.Orientation; //angle of device
+data.RgbImageToDisplayRatio.X; //number of times device's screen fits in the huddle area horizontally
+data.RgbImageToDisplayRatio.Y; //number of times device's screen fits in the huddle area vertically
 ```
 
-###panLock() and panUnlock()
+####getFeedSize()
+The size in CSS pixels of the camera feed from the HuddleCamera i.e how big the area of webpage viewable through the huddle is:
+var feedSize = canvas.getFeedSize();
+feedSize[0]; //x size
+feedSize[1]; //y size
+
+
+###Panning
+
+####panLock() and panUnlock()
 
 These functions allow you to prevent touch panning of the canvas under certain conditions.  Simply lock panning to prevent touch panning then unlock panning to reenable. 
 
