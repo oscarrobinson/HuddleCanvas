@@ -25,6 +25,9 @@ var HuddleCanvas = (function() {
     //holds whether this is the first time getting the feed info from huddle
     var firstRun = true;
 
+    //holds huddle data for getter
+    var getterData = {};
+
 
     //set default values for settings
     var settings = {
@@ -63,6 +66,14 @@ var HuddleCanvas = (function() {
         PanPosition = HuddleCanvasCollections.getPanPositions();
         loadCanvas();
         return this;
+    }
+
+    function publicGetHuddleData() {
+        return getterData;
+    }
+
+    function publicGetHuddleContainerId() {
+        return huddleContainerId;
     }
 
     function publicGetOffsets() {
@@ -327,13 +338,12 @@ var HuddleCanvas = (function() {
                 $('#huddle-glyph-container').css('z-index', 1001);
 
                 //Extract the raw API data
+                getterData = data;
                 var loc = data.Location;
                 var x = loc[0];
                 var y = loc[1];
                 var angle = data.Orientation;
-                currentAngle = angle;
                 var ratio = data.RgbImageToDisplayRatio;
-
 
                 //set feed width and height
                 feedWidth = ratio.X * windowWidth;
@@ -346,10 +356,10 @@ var HuddleCanvas = (function() {
 
                 $("#huddle-canvas-background").css('position', 'absolute');
 
-                //do any callbacks passed to the canvas if first run
-                if (firstRun) {
-                    for (var x = 0; x < settings.callbacks.length; x++) {
-                        settings.callbacks[x]();
+                //do any callbacks passed to the canvas if first run and we have a feed size
+                if (firstRun && feedWidth != 0 && feedHeight != 0) {
+                    for (var cq = 0; cq < settings.callbacks.length; cq++) {
+                        settings.callbacks[cq]();
                     }
                     firstRun = false;
                 }
@@ -520,7 +530,9 @@ var HuddleCanvas = (function() {
         getOffsets: publicGetOffsets,
         panLock: publicPanLock,
         panUnlock: publicPanUnlock,
-        getFeedSize: publicGetFeedSize
+        getFeedSize: publicGetFeedSize,
+        getHuddleData: publicGetHuddleData,
+        getHuddleContainerId: publicGetHuddleContainerId
     }
 })();
 
