@@ -29,6 +29,9 @@ var HuddleCanvas = (function() {
     var getterData = {};
 
 
+    var currentAngle;
+
+
     //set default values for settings
     var settings = {
         showDebugBox: false,
@@ -344,6 +347,7 @@ var HuddleCanvas = (function() {
                 var y = loc[1];
                 var angle = data.Orientation;
                 var ratio = data.RgbImageToDisplayRatio;
+                currentAngle = angle;
 
                 //set feed width and height
                 feedWidth = ratio.X * windowWidth;
@@ -430,6 +434,7 @@ var HuddleCanvas = (function() {
                     }
 
                     var angle = currentAngle * Math.PI / 180.0;
+                    console.log(angle);
                     var dx = ev.deltaX;
                     var dy = ev.deltaY;
                     inPanOffsetX = (Math.cos(angle) * dx) - (Math.sin(angle) * dy);
