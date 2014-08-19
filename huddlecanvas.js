@@ -32,6 +32,7 @@ var HuddleCanvas = (function() {
     var currentAngle;
 
 
+
     //set default values for settings
     var settings = {
         showDebugBox: false,
@@ -69,6 +70,10 @@ var HuddleCanvas = (function() {
         PanPosition = HuddleCanvasCollections.getPanPositions();
         loadCanvas();
         return this;
+    }
+
+    function publicGetHuddleSessionServer() {
+        return sessionServer;
     }
 
     function publicGetHuddleData() {
@@ -220,7 +225,7 @@ var HuddleCanvas = (function() {
                     $("#huddle-canvas-background").css('z-index', 1);
                     $("#huddle-canvas-background").css('background-image', 'url(' + settings.imgSrcPath + ')');
                     $("#huddle-canvas-background").css('position', 'absolute');
-                    $("#huddle-canvas-background").css('background-position', 'center');
+                    $("#huddle-canvas-background").css('background-position', 'left top');
                     $("#huddle-canvas-background").css('background-size', 'contain');
 
                     settings.layers.push("huddle-canvas-background");
@@ -422,7 +427,7 @@ var HuddleCanvas = (function() {
 
             //---------------TOUCH DRAG STUFF---------------------
             if (settings.panningEnabled === true) {
-                var hammerCanvas = document.getElementById(huddleContainerId);
+                var hammerCanvas = document.getElementsByTagName("body")[0];
                 var hammertime = new Hammer(hammerCanvas);
 
                 hammertime.on('pan', function(ev) {
@@ -434,7 +439,6 @@ var HuddleCanvas = (function() {
                     }
 
                     var angle = currentAngle * Math.PI / 180.0;
-                    console.log(angle);
                     var dx = ev.deltaX;
                     var dy = ev.deltaY;
                     inPanOffsetX = (Math.cos(angle) * dx) - (Math.sin(angle) * dy);
@@ -537,7 +541,8 @@ var HuddleCanvas = (function() {
         panUnlock: publicPanUnlock,
         getFeedSize: publicGetFeedSize,
         getHuddleData: publicGetHuddleData,
-        getHuddleContainerId: publicGetHuddleContainerId
+        getHuddleContainerId: publicGetHuddleContainerId,
+        getHuddleSessionServer: publicGetHuddleSessionServer
     }
 })();
 
