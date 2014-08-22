@@ -28,8 +28,15 @@ var HuddleCanvas = (function() {
     //holds huddle data for getter
     var getterData = {};
 
+    var totalRotation = 0;
 
-    var currentAngle;
+    var currentDeviceAngle = 0;
+    var rotationOffset = 0;
+    var rotationOffsetX = 0;
+    var rotationOffsetY = 0;
+
+    var deviceCenterToDeviceLeft = 0;
+    var deviceCenterToDeviceTop = 0;
 
 
 
@@ -141,6 +148,48 @@ var HuddleCanvas = (function() {
         });
     }
 
+    function boundAngle(input) {
+        //takes an angle and makes it fit CSS angle i.e 0-180, 0- -180
+        if (input > 180) {
+            input = -(360 - input);
+        } else if (input < -180) {
+            input = (360 + input);
+        }
+        return input;
+    }
+
+    function getCanvasAngle() {
+        //get current angle of the element
+        //thanks to http://css-tricks.com/get-value-of-css-rotation-through-javascript/
+        var el = document.getElementById(huddleContainerId);
+        var st = window.getComputedStyle(el, null);
+        //canvas.debugAppend(st);
+        var tr = st.getPropertyValue("-webkit-transform") ||
+            st.getPropertyValue("-moz-transform") ||
+            st.getPropertyValue("-ms-transform") ||
+            st.getPropertyValue("-o-transform") ||
+            st.getPropertyValue("transform") ||
+            "fail...";
+
+        // rotation matrix - http://en.wikipedia.org/wiki/Rotation_matrix
+
+        var values = tr.split('(')[1];
+        values = values.split(')')[0];
+        values = values.split(',');
+        var a = values[0];
+        var b = values[1];
+        var c = values[2];
+        var d = values[3];
+
+        var scale = Math.sqrt(a * a + b * b);
+
+        // arc tan, convert from radians to degrees, round
+        var sin = b / scale;
+        var existingAngle__ = Math.round(Math.atan2(b, a) * (180 / Math.PI));
+        //canvas.debugAppend(existingAngle__);
+        return existingAngle__;
+    }
+
     function loadCanvas() {
         $(document).ready(function() {
 
@@ -153,7 +202,7 @@ var HuddleCanvas = (function() {
                     'height': '200px',
                     'width': '300px',
                     'padding': '5px',
-                    'background-color': 'rgba(0, 0, 0, 0.5)',
+                    'background-color': 'rgba(0, 0, 0, 0.2)',
                     'font-size': '12px',
                     'color': 'white',
                     'text-align': 'left',
@@ -186,9 +235,6 @@ var HuddleCanvas = (function() {
 
             var inPanOffsetX = 0;
             var inPanOffsetY = 0;
-
-            var currentAngle = 0;
-
 
             //load the image we're going to use as the background so we can get its width and height
             if (settings.imgSrcPath) {
@@ -267,8 +313,8 @@ var HuddleCanvas = (function() {
             //Called on receiving of Huddle API data to move the canvases
             function moveCanvas(id, x, y, scaleX, scaleY, rotation, ratioX, ratioY, offsetX, offsetY, inPanOffsetX, inPanOffsetY) {
                 //work out some values for canvas movement
-                var deviceCenterToDeviceLeft = ((feedWidth / ratioX) / 2);
-                var deviceCenterToDeviceTop = ((feedHeight / ratioY) / 2);
+                deviceCenterToDeviceLeft = ((feedWidth / ratioX) / 2);
+                deviceCenterToDeviceTop = ((feedHeight / ratioY) / 2);
 
                 //offsetX and offsetY take into account touch panning, we need to get them from our meteor collection so it's synced across all devices in the huddle
                 if (settings.panningEnabled === true) {
@@ -288,7 +334,10 @@ var HuddleCanvas = (function() {
                                 offsetX: 0,
                                 offsetY: 0,
                                 inPanOffsetX: 0,
-                                inPanOffsetY: 0
+                                inPanOffsetY: 0,
+                                rotationOffset: 0,
+                                rotationOffsetX: 0,
+                                rotationOffsetY: 0
                             });
 
                         }
@@ -300,6 +349,9 @@ var HuddleCanvas = (function() {
                                 offsetY = offsets.offsetY;
                                 inPanOffsetX = offsets.inPanOffsetX;
                                 inPanOffsetY = offsets.inPanOffsetY;
+                                rotationOffset = offsets.rotationOffset;
+                                rotationOffsetX = offsets.rotationOffsetX;
+                                rotationOffsetY = offsets.rotationOffsetY;
                             }
                         }
                     }
@@ -330,12 +382,48 @@ var HuddleCanvas = (function() {
                 $(id).css('left', txd);
 
 
+
                 //Handle the rotation of the canvas
+                //var existingCanvasAngle = getCanvasAngle();
                 var rotationX = -tx;
                 var rotationY = -ty;
-                applyAllBrowsers(id, 'transform-origin', rotationX + 'px ' + rotationY + 'px');
-                var rotate = 'rotate(' + (-rotation) + 'deg)';
+
+                /* d3.select("#testlayer").append("circle")
+                    .attr("cx", rotationX)
+                    .attr("cy", rotationY)
+                    .attr("r", 10)
+                    .style("fill", "red");
+
+                d3.select("#testlayer").append("circle")
+                    .attr("cx", rotationOffsetX)
+                    .attr("cy", rotationOffsetY)
+                    .attr("r", 10)
+                    .style("fill", "steelblue");
+
+                d3.select("#testlayer").append("circle")
+                    .attr("cx", $('#' + huddleContainerId).width() / 2)
+                    .attr("cy", $('#' + huddleContainerId).height() / 2)
+                    .attr("r", 10)
+                    .style("fill", "green"); */
+
+                var containerWidth = $('#' + huddleContainerId).width() / 2;
+                var containerHeight = $('#' + huddleContainerId).height() / 2;
+                console.log("rotationX: " + rotationX + " || rotationY: " + rotationY + " || rotationOffsetX: " + rotationOffsetX + " || rotationOffsetY: " + rotationOffsetY);
+                var rotate = 'translate(' + (-(containerWidth - rotationX)) + 'px,' + (-(containerHeight - rotationY)) + 'px)' +
+                    'rotate(' + (-(rotation)) + 'deg)' +
+                    'translate(' + (containerWidth - rotationX) + 'px,' + (containerHeight - rotationY) + 'px)' +
+                    'translate(' + (-(containerWidth - rotationOffsetX)) + 'px,' + (-(containerHeight - rotationOffsetY)) + 'px)' +
+                    'rotate(' + (rotationOffset) + 'deg)' +
+                    'translate(' + (containerWidth - rotationOffsetX) + 'px,' + (containerHeight - rotationOffsetY) + 'px)';
                 applyAllBrowsers(id, 'transform', rotate);
+
+                //rotation offset from touch
+                //existingCanvasAngle = getCanvasAngle();
+                /*canvas.debugWrite("rotationOffset: " + rotationOffset);
+                applyAllBrowsers(id, 'transform-origin', rotationOffsetX + 'px ' + rotationOffsetY + 'px');
+                applyAllBrowsers(id, 'transform', 'rotate(' + (rotationOffset) + 'deg)');*/
+
+
             }
 
 
@@ -352,7 +440,11 @@ var HuddleCanvas = (function() {
                 var y = loc[1];
                 var angle = data.Orientation;
                 var ratio = data.RgbImageToDisplayRatio;
-                currentAngle = angle;
+                currentDeviceAngle = angle;
+
+                totalRotation = angle + rotationOffset;
+                totalRotation = boundAngle(totalRotation);
+                //canvas.debugWrite(totalRotation);
 
                 //set feed width and height
                 feedWidth = ratio.X * windowWidth;
@@ -430,7 +522,11 @@ var HuddleCanvas = (function() {
                 var hammerCanvas = document.getElementsByTagName("body")[0];
                 var hammertime = new Hammer(hammerCanvas);
 
-                hammertime.on('pan', function(ev) {
+                hammertime.get('rotate').set({
+                    enable: true
+                });
+
+                hammertime.on('pan rotate', function(ev) {
                     ev.preventDefault();
 
                     //we don't pan if the pan lock is on
@@ -438,11 +534,35 @@ var HuddleCanvas = (function() {
                         return;
                     }
 
-                    var angle = currentAngle * Math.PI / 180.0;
+                    var angle = (currentDeviceAngle * Math.PI) / 180.0;
                     var dx = ev.deltaX;
                     var dy = ev.deltaY;
                     inPanOffsetX = (Math.cos(angle) * dx) - (Math.sin(angle) * dy);
                     inPanOffsetY = (Math.sin(angle) * dx) + (Math.cos(angle) * dy);
+
+                    ////canvas.debugWrite(ev.type);
+
+                    if (ev.rotation && !ev.isFinal) {
+                        var eventRotation = ev.rotation;
+                        //console.log(ev);
+
+                        //eventRotation = boundAngle(eventRotation);
+
+                        //canvas.debugWrite(Math.abs(rotationOffset - eventRotation));
+                        //canvas.debugAppend("rotationOffset: " + rotationOffset);
+                        //canvas.debugAppend("ev.rotation: " + eventRotation);
+                        //little hack to fix some of hammer's stupid bugginess
+                        if ((!(Math.abs(rotationOffset - eventRotation) > 10)) || Math.abs(eventRotation) < 10 || (!(Math.abs(Math.abs(rotationOffset) - Math.abs(eventRotation)) > 10))) {
+                            rotationOffset = eventRotation;
+                            //canvas.debugAppend(ev.isFirst);
+                        }
+                        rotationOffsetX = ev.center.x + (-publicGetOffsets()[0]);
+                        rotationOffsetY = ev.center.y + (-publicGetOffsets()[1]);
+                        ////canvas.debugWrite(rotationOffset);
+                        ////canvas.debugAppend(rotationOffsetX);
+                        ////canvas.debugAppend(rotationOffsetY);
+
+                    }
 
 
                     //do we have offsets for our session?, if not create a new doc for them
@@ -456,7 +576,10 @@ var HuddleCanvas = (function() {
                                 offsetX: 0,
                                 offsetY: 0,
                                 inPanOffsetX: 0,
-                                inPanOffsetY: 0
+                                inPanOffsetY: 0,
+                                rotationOffset: 0,
+                                rotationOffsetX: 0,
+                                rotationOffsetY: 0
                             });
                         } else {
                             sessionOffsetId = doc._id;
@@ -469,7 +592,10 @@ var HuddleCanvas = (function() {
                     PanPosition.update(sessionOffsetId, {
                         $set: {
                             inPanOffsetX: inPanOffsetX,
-                            inPanOffsetY: inPanOffsetY
+                            inPanOffsetY: inPanOffsetY,
+                            rotationOffset: rotationOffset,
+                            rotationOffsetX: rotationOffsetX,
+                            rotationOffsetY: rotationOffsetY
                         }
                     });
 
@@ -484,8 +610,6 @@ var HuddleCanvas = (function() {
                                 offsetX = offsets.offsetX;
                                 offsetY = offsets.offsetY;
                             }
-
-
                         }
 
                         //then add the result of our pan
