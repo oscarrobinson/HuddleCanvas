@@ -412,7 +412,7 @@ var HuddleCanvas = (function() {
 
                 var containerWidth = $('#' + huddleContainerId).width() / 2;
                 var containerHeight = $('#' + huddleContainerId).height() / 2;
-                console.log("rotationX: " + rotationX + " || rotationY: " + rotationY + " || rotationOffsetX: " + rotationOffsetX + " || rotationOffsetY: " + rotationOffsetY);
+                //console.log("rotationX: " + rotationX + " || rotationY: " + rotationY + " || rotationOffsetX: " + rotationOffsetX + " || rotationOffsetY: " + rotationOffsetY);
                 var rotate = 'translate(' + (-(containerWidth - rotationX)) + 'px,' + (-(containerHeight - rotationY)) + 'px)' +
                     'rotate(' + (-(rotation)) + 'deg)' +
                     'translate(' + (containerWidth - rotationX) + 'px,' + (containerHeight - rotationY) + 'px)' +
