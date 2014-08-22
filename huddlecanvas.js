@@ -83,6 +83,10 @@ var HuddleCanvas = (function() {
         return sessionServer;
     }
 
+    function publicGetTotalRotation() {
+        return totalRotation;
+    }
+
     function publicGetHuddleData() {
         return getterData;
     }
@@ -666,7 +670,8 @@ var HuddleCanvas = (function() {
         getFeedSize: publicGetFeedSize,
         getHuddleData: publicGetHuddleData,
         getHuddleContainerId: publicGetHuddleContainerId,
-        getHuddleSessionServer: publicGetHuddleSessionServer
+        getHuddleSessionServer: publicGetHuddleSessionServer,
+        getTotalRotation: publicGetTotalRotation
     }
 })();
 
