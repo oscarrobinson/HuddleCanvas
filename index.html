@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta name="viewport" content="minimal-ui, width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+		<title>Huddle Demo</title>
+		<script src="hammer.js"></script>
+		<script src="touch-emulator.js"></script>
+		<script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+		<script>
+			//TouchEmulator();
+			//TouchEmulator.multiTouchOffset = 10;
+		</script>
+		<style>
+				/* http://meyerweb.com/eric/tools/css/reset/
+			v2.0 | 20110126
+			License: none (public domain)
+			*/
+			html, body, div, span, applet, object, iframe,
+			h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+			a, abbr, acronym, address, big, cite, code,
+			del, dfn, em, img, ins, kbd, q, s, samp,
+			small, strike, strong, sub, sup, tt, var,
+			b, u, i, center,
+			dl, dt, dd, ol, ul, li,
+			fieldset, form, label, legend,
+			table, caption, tbody, tfoot, thead, tr, th, td,
+			article, aside, canvas, details, embed,
+			figure, figcaption, footer, header, hgroup,
+			menu, nav, output, ruby, section, summary,
+			time, mark, audio, video {
+				margin: 0;
+				padding: 0;
+				border: 0;
+				font-size: 100%;
+				font: inherit;
+				vertical-align: baseline;
+			}
+			/* HTML5 display-role reset for older browsers */
+			article, aside, details, figcaption, figure,
+			footer, header, hgroup, menu, nav, section {
+				display: block;
+			}
+			body {
+				line-height: 1;
+			}
+			ol, ul {
+				list-style: none;
+			}
+			blockquote, q {
+				quotes: none;
+			}
+			blockquote:before, blockquote:after,
+			q:before, q:after {
+				content: '';
+				content: none;
+			}
+			table {
+				border-collapse: collapse;
+				border-spacing: 0;
+			}
+		</style>
+		<!-- CSS Styling -->
+		<style>
+			/* Scaffolding */
+			body {
+				background-color: #7f8c8d;
+				color: #ffffff;
+				font-family: 'Open Sans', sans-serif;
+			}
+			.container {
+				width: 960px;
+				margin: 0 auto;
+			}
+			.clearfix {
+				clear: both;
+			}
+			input {
+				outline: none;
+				-webkit-appearance: none !important;
+			}
+			/* Font styling */
+			h1 {
+				font-size: 36px;
+				padding: 10px;
+			}
+			h2 {
+				font-size: 24px;
+				padding: 10px;
+			}
+			/* Header styling*/
+			header {
+				padding: 20px 0;
+			}
+			header h1 {
+				color: #ecf0f1;
+				float: left;
+			}
+			header nav {
+				float: right;
+			}
+			header ul {
+				list-style-type: none;
+				padding-top: 10px;
+			}
+			header ul li {
+				display:inline;
+				padding: 10px
+			}
+			header ul li.last {
+				padding-right: 0px;
+			}
+			header ul li a {
+				color: #bdc3c7;
+				text-decoration: none;
+				font-size: 16px;
+			}
+			header ul li a:hover {
+				color: #ecf0f1;
+				text-transform: none;
+			}
+			/* Article styling */
+			.ad {
+				padding: 100px 0px;
+				text-align: center;
+			}
+			.jumbo {
+				font-size: 48px;
+				font-weight: bold;
+				color: #bdc3c7;
+				padding: 10px;
+			}
+			.sub {
+				padding: 10px;
+				font-size: 24px;
+			}
+			.download-button {
+				width: 260px;
+				height: auto;
+				font-size: 20px;
+				padding: 15px;
+				margin: 10px auto;
+				text-align: center;
+				-webkit-border-radius: 10px;
+				-moz-border-radius: 10px;
+				border-radius: 10px;
+				background-color: #2980b9;
+			}
+			.download-button a {
+				color: white;
+				text-decoration: none;
+			}
+			.download-button a:hover {
+				text-transform: none;
+			}
+		#virtual-canvas{
+			margin-top: 100px;
+			position:relative;
+			width:800px;
+			height:500px;
+			background-color: rgb(252,201,122);
+			margin-bottom: 130px;
+			margin-left: auto;
+			margin-right: auto;
+		}
+		.device{
+			width:150px;
+			height:100px;
+			border-radius: 8px;
+			border-color: black;
+			border-style: solid;
+			position: absolute;
+			background-image:url('map.jpg');
+			background-repeat: no-repeat;
+			background-color: white;
+		}
+		#device0{
+			top:100px;
+			left:100px;
+		}
+		#device1{
+			top:100px;
+			left:300px;
+		}
+		#device2{
+			top:100px;
+			left:500px;
+		}
+		#device3{
+			top:300px;
+			left:100px;
+		}
+		#device4{
+			top:300px;
+			left:300px;
+		}
+		#device5{
+			top:300px;
+			left:500px;
+		}
+		</style>
+		<!-- Google Fonts Script -->
+		<script type="text/javascript">
+		WebFontConfig = {
+		google: { families: [ 'Open+Sans:400italic,400,300,700:latin' ] }
+		};
+		(function() {
+		var wf = document.createElement('script');
+		wf.src = ('https:' == document.location.protocol ? 'https' : 'http') +
+		'://ajax.googleapis.com/ajax/libs/webfont/1/webfont.js';
+		wf.type = 'text/javascript';
+		wf.async = 'true';
+		var s = document.getElementsByTagName('script')[0];
+		s.parentNode.insertBefore(wf, s);
+		})();
+		</script>
+	</head>
+	<body>
+		<div class="container">
+		<header>
+			<h1>HuddleCanvas</h1>
+			<nav>
+				<ul>
+					<li><a href="#demo">Demo</a></li>
+					<li><a href="https://github.com/scarrobin/HuddleCanvas#readme">Documentation</a></li>
+					<li class="last"><a href="https://github.com/jonnymanf/HuddleObject">HuddleObject API</a></li>
+				</ul>
+			</nav>
+		</header>
+		<article class="clearfix">
+			<div class="ad">
+				<div class="jumbo">Easily Create Canvases For Huddle</div>
+				<div class="sub">Create a Huddle application with an explorable image and multiple layers in minutes</div>
+				<div class="download-button">
+					<a href="https://github.com/scarrobin/HuddleCanvas">Download HuddleCanvas</a>
+				</div>
+			</div>
+			<a name="demo"></a>
+			<h2>Demo</h2>
+				<div id="virtual-canvas">
+					<div class="device" id="device0"></div>
+					<div class="device" id="device1"></div>
+					<div class="device" id="device2"></div>
+					<div class="device" id="device3"></div>
+					<div class="device" id="device4"></div>
+					<div class="device" id="device5"></div>
+				</div>
+		</article>
+	</div>
+	</body>
+	<script>
+		function applyAllBrowsers(element, action, parameters) {
+			var browserPrefixes = [
+				"-o-",
+				"-webkit-",
+				"-ms-",
+				"",
+				"-moz-"
+			];
+			for (z = 0; z < browserPrefixes.length; z++) {
+				$(element).css(browserPrefixes[z] + action, parameters);
+			}
+		}
+		var borderWidth = 15;
+		
+		var devices = document.getElementsByClassName('device');
+		console.log(devices);
+		var fixedOffsets = [];
+		for(var z=0; z<devices.length; z++){
+			fixedOffsets.push({left: $(devices[z]).position().left, top: $(devices[z]).position().top});
+			//apply corrrect backgroud offsets
+			$(devices[z]).css('background-position', (-$(devices[z]).position().left)+'px '+(-$(devices[z]).position().top)+'px');
+			$(devices[z]).css('border-width', borderWidth+'px');
+		}
+		console.log(fixedOffsets);
+		for(var z=0; z<devices.length; z++){
+			var touchHandler = new Hammer(devices[z]);
+			/*touchHandler.get('rotate').set({
+				enable: true
+			});*/
+			touchHandler.on('pan rotate', function(ev){
+				ev.preventDefault();
+				var deviceNo = ev.target.id.substr(ev.target.id.length-1);
+				$(ev.target).css('left', fixedOffsets[deviceNo].left+ev.deltaX);
+				$(ev.target).css('top', fixedOffsets[deviceNo].top+ev.deltaY);
+				if(ev.rotation){
+					//document.getElementById('debug').innerHTML = ev.rotation;
+					console.log(ev);
+					applyAllBrowsers(ev.target, 'transform', 'rotate('+ev.rotation+'deg)');
+				}
+				if(ev.isFinal){
+					fixedOffsets[deviceNo].left = fixedOffsets[deviceNo].left+ev.deltaX;
+					fixedOffsets[deviceNo].top = fixedOffsets[deviceNo].top+ev.deltaY;
+					$(ev.target).css('left', fixedOffsets[deviceNo].left);
+					$(ev.target).css('top', fixedOffsets[deviceNo].top);
+				}
+				var top = parseInt($(ev.target).css('top').replace(/[^-\d\.]/g, ''));
+				var left  = parseInt($(ev.target).css('left').replace(/[^-\d\.]/g, ''));
+				if(top < -60 || top > 430 || left > 710 || left < -90){
+					$(ev.target).css('background-position', '0px 0px');
+					$(ev.target).css('background-image', 'url(\'glyph'+(deviceNo%3)+'.png\')');
+				}
+				else{
+					$(ev.target).css('background-image', 'url(\'map.jpg\')');
+					$(ev.target).css('background-position', (-$(ev.target).position().left-borderWidth)+'px '+(-$(ev.target).position().top-borderWidth)+'px');
+				}
+			});
+		}
+
+
+		$('.download-button').on('mouseover', function(){
+			$(this).css('background-color', '#3498db');
+		});
+		$('.download-button').on('mouseout', function(){
+			$(this).css('background-color', '#2980b9');
+		});
+	</script>
+</html>
