@@ -3,6 +3,8 @@ HuddleCanvas
 
 Huddle canvas abstracts away the complex code of canvas exploration using the [huddle meteor API](https://github.com/raedle/meteor-huddle).  This allows you to create explorable huddle canvases with multiple layers in minutes rather than hours.
 
+To get a basic idea of what Huddle and HuddleCanvas allows you to create with a tabletop of mobile devices, look at this [demo](http://scarrobin.github.io/HuddleCanvas/#demo)
+
 ##Getting Started
 To use HuddleCanvas you need [Meteor](http://www.meteor.com)<br>
 `$ curl https://install.meteor.com/ | sh`
