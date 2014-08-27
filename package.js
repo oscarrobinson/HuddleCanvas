@@ -13,3 +13,7 @@ Package.on_use(function(api) {
         'positioncollection.js'
     ], ['server', 'client']);
 });
+
+Package.describe({
+    git: 'https://github.com/scarrobin/HuddleCanvas.git'
+});
