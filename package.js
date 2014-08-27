@@ -1,6 +1,6 @@
-Package.on_use(function(api) {
-    api.use('jquery', 'client');
-    api.imply('jquery', 'client');
+Package.onUse(function(api) {
+    api.use('jquery@1.11.0', 'client');
+    api.imply('jquery@1.11.0', 'client');
     api.add_files([
         'hammer.js',
         'huddlecanvas.js'
@@ -12,7 +12,7 @@ Package.on_use(function(api) {
 
 Package.describe({
     summary: "Create explorable layers for use with Huddle",
-    version: "0.6.7",
+    version: "0.6.8",
     name: "scarrobin:huddlecanvas",
     git: 'https://github.com/scarrobin/HuddleCanvas.git'
 });
