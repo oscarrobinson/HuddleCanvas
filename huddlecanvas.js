@@ -31,12 +31,20 @@ var HuddleCanvas = (function() {
     var totalRotation = 0;
 
     var currentDeviceAngle = 0;
+    var finalRotationOffset = 0;
     var rotationOffset = 0;
     var rotationOffsetX = 0;
     var rotationOffsetY = 0;
 
     var deviceCenterToDeviceLeft = 0;
     var deviceCenterToDeviceTop = 0;
+
+
+    var scaleOffset = 1;
+    var finalScaleOffset = 1;
+    var scaleOffsetX = 0;
+    var scaleOffsetY = 0;
+
 
 
 
@@ -46,7 +54,9 @@ var HuddleCanvas = (function() {
         panningEnabled: true,
         imgSrcPath: "",
         layers: [],
-        callbacks: []
+        callbacks: [],
+        scalingEnabled: true,
+        rotationEnabled: true
     }
 
     function publicInit(computerVisionServer, computerVisionPort, huddleName, settingsParam) {
@@ -71,6 +81,12 @@ var HuddleCanvas = (function() {
                     settings.callbacks.push(settingsParam.callbacks[u]);
                 }
             }
+            if (settingsParam.scalingEnabled !== undefined) {
+                settings.scalingEnabled = settingsParam.scalingEnabled;
+            }
+            if (settingsParam.rotationEnabled !== undefined) {
+                settings.rotationEnabled = settingsParam.rotationEnabled;
+            }
         }
         huddle.connect(computerVisionServer, computerVisionPort);
         sessionServer = computerVisionServer + computerVisionPort;
@@ -81,10 +97,6 @@ var HuddleCanvas = (function() {
 
     function publicGetHuddleSessionServer() {
         return sessionServer;
-    }
-
-    function publicGetTotalRotation() {
-        return totalRotation;
     }
 
     function publicGetHuddleData() {
@@ -320,6 +332,20 @@ var HuddleCanvas = (function() {
                 deviceCenterToDeviceLeft = ((feedWidth / ratioX) / 2);
                 deviceCenterToDeviceTop = ((feedHeight / ratioY) / 2);
 
+                var move_offsetX = 0;
+                var move_offsetY = 0;
+                var move_inPanOffsetX = 0;
+                var move_inPanOffsetY = 0;
+                var move_rotationOffset = 0;
+                var move_finalRotationOffset = 0;
+                var move_rotationOffsetX = 0;
+                var move_rotationOffsetY = 0;
+                var move_scaleOffset = 1;
+                var move_finalScaleOffset = 1;
+                var move_scaleOffsetX = 0;
+                var move_scaleOffsetY = 0;
+
+
                 //offsetX and offsetY take into account touch panning, we need to get them from our meteor collection so it's synced across all devices in the huddle
                 if (settings.panningEnabled === true) {
                     if (PanPosition) {
@@ -333,6 +359,7 @@ var HuddleCanvas = (function() {
                         }
                         //if we don't, create one
                         else {
+                            console.log("FINAL ROTATION BECOMES 0");
                             sessionOffsetId = PanPosition.insert({
                                 sessionId: sessionServer,
                                 offsetX: 0,
@@ -340,8 +367,13 @@ var HuddleCanvas = (function() {
                                 inPanOffsetX: 0,
                                 inPanOffsetY: 0,
                                 rotationOffset: 0,
+                                finalRotationOffset: 0,
                                 rotationOffsetX: 0,
-                                rotationOffsetY: 0
+                                rotationOffsetY: 0,
+                                scaleOffset: 1,
+                                finalScaleOffset: 1,
+                                scaleOffsetX: 0,
+                                scaleOffsetY: 0
                             });
 
                         }
@@ -349,21 +381,26 @@ var HuddleCanvas = (function() {
                         if (sessionOffsetId !== "") {
                             var offsets = PanPosition.findOne(sessionOffsetId);
                             if (offsets) {
-                                offsetX = offsets.offsetX;
-                                offsetY = offsets.offsetY;
-                                inPanOffsetX = offsets.inPanOffsetX;
-                                inPanOffsetY = offsets.inPanOffsetY;
-                                rotationOffset = offsets.rotationOffset;
-                                rotationOffsetX = offsets.rotationOffsetX;
-                                rotationOffsetY = offsets.rotationOffsetY;
+                                move_offsetX = offsets.offsetX;
+                                move_offsetY = offsets.offsetY;
+                                move_inPanOffsetX = offsets.inPanOffsetX;
+                                move_inPanOffsetY = offsets.inPanOffsetY;
+                                move_rotationOffset = offsets.rotationOffset;
+                                move_finalRotationOffset = offsets.finalRotationOffset;
+                                move_rotationOffsetX = offsets.rotationOffsetX;
+                                move_rotationOffsetY = offsets.rotationOffsetY;
+                                move_scaleOffset = offsets.scaleOffset;
+                                move_finalScaleOffset = offsets.finalScaleOffset;
+                                move_scaleOffsetX = offsets.scaleOffsetX;
+                                move_scaleOffsetY = offsets.scaleOffsetY;
                             }
                         }
                     }
                 }
 
                 //setup the variables to translate our canvas
-                var tx = (-1 * x * feedWidth) + offsetX + inPanOffsetX;
-                var ty = (-1 * y * feedHeight) + offsetY + inPanOffsetY;
+                var tx = (-1 * x * feedWidth) + move_offsetX + move_inPanOffsetX;
+                var ty = (-1 * y * feedHeight) + move_offsetY + move_inPanOffsetY;
 
                 if (deviceCenterToDeviceLeft && deviceCenterToDeviceTop) {
                     var txd = tx + deviceCenterToDeviceLeft;
@@ -374,10 +411,19 @@ var HuddleCanvas = (function() {
                 }
 
 
+                var containerWidth = $('#' + huddleContainerId).width() / 2;
+                var containerHeight = $('#' + huddleContainerId).height() / 2;
 
                 //scale the canvas according to the device's size (ensures e.g iphone canvas is same physical size as surface pro canvas)
-                var scale = 'scale(' + scaleX + ',' + scaleY + ') ';
-                applyAllBrowsers(id, 'transform', scale);
+                //then scale the canvas for our scale offset
+                /* var scale = 'scale(' + scaleX + ',' + scaleY + ') ' +
+                    'translate(' + (-(containerWidth - scaleOffsetX)) + 'px,' + (-(containerHeight - scaleOffsetY)) + 'px)' +
+                    'scale(' + scaleOffset + ',' + scaleOffset + ')' +
+                    'translate(' + ((containerWidth - scaleOffsetX)) + 'px,' + ((containerHeight - scaleOffsetY)) + 'px)';
+                applyAllBrowsers(id, 'transform', scale);*/
+
+
+
 
                 //set the offset of the canvas so its physical position changes
                 coordX = txd;
@@ -410,16 +456,53 @@ var HuddleCanvas = (function() {
                     .attr("r", 10)
                     .style("fill", "green"); */
 
-                var containerWidth = $('#' + huddleContainerId).width() / 2;
-                var containerHeight = $('#' + huddleContainerId).height() / 2;
-                //console.log("rotationX: " + rotationX + " || rotationY: " + rotationY + " || rotationOffsetX: " + rotationOffsetX + " || rotationOffsetY: " + rotationOffsetY);
-                var rotate = 'translate(' + (-(containerWidth - rotationX)) + 'px,' + (-(containerHeight - rotationY)) + 'px)' +
-                    'rotate(' + (-(rotation)) + 'deg)' +
-                    'translate(' + (containerWidth - rotationX) + 'px,' + (containerHeight - rotationY) + 'px)' +
-                    'translate(' + (-(containerWidth - rotationOffsetX)) + 'px,' + (-(containerHeight - rotationOffsetY)) + 'px)' +
-                    'rotate(' + (rotationOffset) + 'deg)' +
-                    'translate(' + (containerWidth - rotationOffsetX) + 'px,' + (containerHeight - rotationOffsetY) + 'px)';
-                applyAllBrowsers(id, 'transform', rotate);
+                console.log("rotationOffset: " + move_rotationOffset + " || finalRotationOffset: " + move_finalRotationOffset);
+
+                d3.select("#testlayer").append("circle")
+                    .attr("cx", scaleOffsetX)
+                    .attr("cy", scaleOffsetY)
+                    .attr("r", 10)
+                    .style("fill", "green");
+
+
+
+                if (settings.rotationEnabled && settings.scalingEnabled) {
+                    var transformation =
+                        'translate(' + (-(containerWidth - move_scaleOffsetX)) + 'px,' + (-(containerHeight - move_scaleOffsetY)) + 'px)' +
+                        'scale(' + move_scaleOffset * move_finalScaleOffset + ',' + move_scaleOffset * move_finalScaleOffset + ')' +
+                        'translate(' + ((containerWidth - move_scaleOffsetX)) + 'px,' + ((containerHeight - move_scaleOffsetY)) + 'px)' +
+                        'translate(' + (-(containerWidth - rotationX)) + 'px,' + (-(containerHeight - rotationY)) + 'px)' +
+                        'rotate(' + (-(rotation)) + 'deg)' +
+                        'translate(' + (containerWidth - rotationX) + 'px,' + (containerHeight - rotationY) + 'px)' +
+                        'translate(' + (-(containerWidth - move_rotationOffsetX)) + 'px,' + (-(containerHeight - move_rotationOffsetY)) + 'px)' +
+                        'rotate(' + (move_rotationOffset + move_finalRotationOffset) + 'deg)' +
+                        'translate(' + (containerWidth - move_rotationOffsetX) + 'px,' + (containerHeight - move_rotationOffsetY) + 'px)';
+                    applyAllBrowsers(id, 'transform', transformation);
+                } else if (settings.rotationEnabled && !settings.scalingEnabled) {
+                    var transformation =
+                        'translate(' + (-(containerWidth - rotationX)) + 'px,' + (-(containerHeight - rotationY)) + 'px)' +
+                        'rotate(' + (-(rotation)) + 'deg)' +
+                        'translate(' + (containerWidth - rotationX) + 'px,' + (containerHeight - rotationY) + 'px)' +
+                        'translate(' + (-(containerWidth - move_rotationOffsetX)) + 'px,' + (-(containerHeight - move_rotationOffsetY)) + 'px)' +
+                        'rotate(' + (move_rotationOffset + move_finalRotationOffset) + 'deg)' +
+                        'translate(' + (containerWidth - move_rotationOffsetX) + 'px,' + (containerHeight - move_rotationOffsetY) + 'px)';
+                    applyAllBrowsers(id, 'transform', transformation);
+                } else if (settings.scalingEnabled && !settings.rotationEnabled) {
+                    var transformation =
+                        'translate(' + (-(containerWidth - move_scaleOffsetX)) + 'px,' + (-(containerHeight - move_scaleOffsetY)) + 'px)' +
+                        'scale(' + move_scaleOffset * move_finalScaleOffset + ',' + move_scaleOffset * move_finalScaleOffset + ')' +
+                        'translate(' + ((containerWidth - move_scaleOffsetX)) + 'px,' + ((containerHeight - move_scaleOffsetY)) + 'px)' +
+                        'translate(' + (-(containerWidth - rotationX)) + 'px,' + (-(containerHeight - rotationY)) + 'px)' +
+                        'rotate(' + (-(rotation)) + 'deg)' +
+                        'translate(' + (containerWidth - rotationX) + 'px,' + (containerHeight - rotationY) + 'px)';
+                    applyAllBrowsers(id, 'transform', transformation);
+                } else {
+                    var transformation =
+                        'translate(' + (-(containerWidth - rotationX)) + 'px,' + (-(containerHeight - rotationY)) + 'px)' +
+                        'rotate(' + (-(rotation)) + 'deg)' +
+                        'translate(' + (containerWidth - rotationX) + 'px,' + (containerHeight - rotationY) + 'px)';
+                    applyAllBrowsers(id, 'transform', transformation);
+                }
 
                 //rotation offset from touch
                 //existingCanvasAngle = getCanvasAngle();
@@ -446,7 +529,7 @@ var HuddleCanvas = (function() {
                 var ratio = data.RgbImageToDisplayRatio;
                 currentDeviceAngle = angle;
 
-                totalRotation = angle + rotationOffset;
+                totalRotation = angle + rotationOffset + finalRotationOffset;
                 totalRotation = boundAngle(totalRotation);
                 //canvas.debugWrite(totalRotation);
 
@@ -523,6 +606,36 @@ var HuddleCanvas = (function() {
 
             //---------------TOUCH DRAG STUFF---------------------
             if (settings.panningEnabled === true) {
+
+
+                //do we have offsets for our session?, if not create a new doc for them
+                if (sessionOffsetId === "") {
+                    var doc = PanPosition.findOne({
+                        sessionId: sessionServer
+                    });
+                    if (!doc) {
+                        console.log("FINAL ROTATION BECOMES 0");
+                        sessionOffsetId = PanPosition.insert({
+                            sessionId: sessionServer,
+                            offsetX: 0,
+                            offsetY: 0,
+                            inPanOffsetX: 0,
+                            inPanOffsetY: 0,
+                            rotationOffset: 0,
+                            finalRotationOffset: 0,
+                            rotationOffsetX: 0,
+                            rotationOffsetY: 0,
+                            scaleOffset: 1,
+                            finalScaleOffset: 1,
+                            scaleOffsetX: 0,
+                            scaleOffsetY: 0
+                        });
+                    } else {
+                        sessionOffsetId = doc._id;
+                    }
+                    //console.log(sessionOffsetId);
+                }
+
                 var hammerCanvas = document.getElementsByTagName("body")[0];
                 var hammertime = new Hammer(hammerCanvas);
 
@@ -530,7 +643,11 @@ var HuddleCanvas = (function() {
                     enable: true
                 });
 
-                hammertime.on('pan rotate', function(ev) {
+                hammertime.get('pinch').set({
+                    enable: true
+                });
+
+                hammertime.on('pan rotate pinch', function(ev) {
                     ev.preventDefault();
 
                     //we don't pan if the pan lock is on
@@ -545,8 +662,29 @@ var HuddleCanvas = (function() {
                     inPanOffsetY = (Math.sin(angle) * dx) + (Math.cos(angle) * dy);
 
                     ////canvas.debugWrite(ev.type);
+                    if (ev.type == "pinch") {
+                        //console.log(ev);
+                        scaleOffset = ev.scale;
+                        scaleOffsetX = ev.center.x + (-publicGetOffsets()[0]);
+                        scaleOffsetY = ev.center.y + (-publicGetOffsets()[1]);
+                        if (ev.srcEvent.type == "touchend") {
+                            console.log("end pinch");
+                            finalScaleOffset = finalScaleOffset * ev.scale;
+                            scaleOffset = 1;
+                        }
+                        PanPosition.update(sessionOffsetId, {
+                            $set: {
+                                scaleOffset: scaleOffset,
+                                finalScaleOffset: finalScaleOffset,
+                                scaleOffsetX: scaleOffsetX,
+                                scaleOffsetY: scaleOffsetY
 
-                    if (ev.rotation && !ev.isFinal) {
+                            }
+                        });
+
+                    }
+
+                    if (ev.rotation) {
                         var eventRotation = ev.rotation;
                         //console.log(ev);
 
@@ -560,35 +698,30 @@ var HuddleCanvas = (function() {
                             rotationOffset = eventRotation;
                             //canvas.debugAppend(ev.isFirst);
                         }
+                        var rotation_rad = (totalRotation * Math.PI) / 180.0;
                         rotationOffsetX = ev.center.x + (-publicGetOffsets()[0]);
                         rotationOffsetY = ev.center.y + (-publicGetOffsets()[1]);
                         ////canvas.debugWrite(rotationOffset);
                         ////canvas.debugAppend(rotationOffsetX);
                         ////canvas.debugAppend(rotationOffsetY);
 
-                    }
-
-
-                    //do we have offsets for our session?, if not create a new doc for them
-                    if (sessionOffsetId === "") {
-                        var doc = PanPosition.findOne({
-                            sessionId: sessionServer
-                        });
-                        if (!doc) {
-                            sessionOffsetId = PanPosition.insert({
-                                sessionId: sessionServer,
-                                offsetX: 0,
-                                offsetY: 0,
-                                inPanOffsetX: 0,
-                                inPanOffsetY: 0,
-                                rotationOffset: 0,
-                                rotationOffsetX: 0,
-                                rotationOffsetY: 0
-                            });
-                        } else {
-                            sessionOffsetId = doc._id;
+                        if (ev.srcEvent.type == "touchend" && rotationOffset != 0) {
+                            console.log("end rotate");
+                            finalRotationOffset += rotationOffset;
+                            finalRotationOffset = boundAngle(finalRotationOffset);
+                            rotationOffset = 0;
                         }
-                        //console.log(sessionOffsetId);
+
+                        PanPosition.update(sessionOffsetId, {
+                            $set: {
+                                rotationOffset: rotationOffset,
+                                finalRotationOffset: finalRotationOffset,
+                                rotationOffsetX: rotationOffsetX,
+                                rotationOffsetY: rotationOffsetY
+
+                            }
+                        });
+
                     }
 
 
@@ -597,9 +730,6 @@ var HuddleCanvas = (function() {
                         $set: {
                             inPanOffsetX: inPanOffsetX,
                             inPanOffsetY: inPanOffsetY,
-                            rotationOffset: rotationOffset,
-                            rotationOffsetX: rotationOffsetX,
-                            rotationOffsetY: rotationOffsetY
                         }
                     });
 
@@ -670,8 +800,7 @@ var HuddleCanvas = (function() {
         getFeedSize: publicGetFeedSize,
         getHuddleData: publicGetHuddleData,
         getHuddleContainerId: publicGetHuddleContainerId,
-        getHuddleSessionServer: publicGetHuddleSessionServer,
-        getTotalRotation: publicGetTotalRotation
+        getHuddleSessionServer: publicGetHuddleSessionServer
     }
 })();
 
