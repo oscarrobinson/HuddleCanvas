@@ -1,6 +1,6 @@
 Package.onUse(function(api) {
-    api.use('jquery@1.11.0', 'client');
-    api.imply('jquery@1.11.0', 'client');
+    api.use('jquery@1.0.0', 'client');
+    api.imply('jquery@1.0.0', 'client');
     api.add_files([
         'hammer.js',
         'huddlecanvas.js'
