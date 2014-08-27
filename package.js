@@ -13,6 +13,6 @@ Package.on_use(function(api) {
 Package.describe({
     summary: "allows easy use of the meteorite Huddle module to create explorable images and add layers of information",
     version: "0.6.7",
-    name: "scarrobin:huddlecanbvas",
+    name: "scarrobin:huddlecanvas",
     git: 'https://github.com/scarrobin/HuddleCanvas.git'
 });
