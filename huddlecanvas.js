@@ -359,7 +359,7 @@ var HuddleCanvas = (function() {
                         }
                         //if we don't, create one
                         else {
-                            console.log("FINAL ROTATION BECOMES 0");
+                            //console.log("FINAL ROTATION BECOMES 0");
                             sessionOffsetId = PanPosition.insert({
                                 sessionId: sessionServer,
                                 offsetX: 0,
@@ -456,13 +456,13 @@ var HuddleCanvas = (function() {
                     .attr("r", 10)
                     .style("fill", "green"); */
 
-                console.log("rotationOffset: " + move_rotationOffset + " || finalRotationOffset: " + move_finalRotationOffset);
+                //console.log("rotationOffset: " + move_rotationOffset + " || finalRotationOffset: " + move_finalRotationOffset);
 
-                d3.select("#testlayer").append("circle")
+                /*d3.select("#testlayer").append("circle")
                     .attr("cx", scaleOffsetX)
                     .attr("cy", scaleOffsetY)
                     .attr("r", 10)
-                    .style("fill", "green");
+                    .style("fill", "green");*/
 
 
 
@@ -614,7 +614,7 @@ var HuddleCanvas = (function() {
                         sessionId: sessionServer
                     });
                     if (!doc) {
-                        console.log("FINAL ROTATION BECOMES 0");
+                        //console.log("FINAL ROTATION BECOMES 0");
                         sessionOffsetId = PanPosition.insert({
                             sessionId: sessionServer,
                             offsetX: 0,
@@ -668,7 +668,7 @@ var HuddleCanvas = (function() {
                         scaleOffsetX = ev.center.x + (-publicGetOffsets()[0]);
                         scaleOffsetY = ev.center.y + (-publicGetOffsets()[1]);
                         if (ev.srcEvent.type == "touchend") {
-                            console.log("end pinch");
+                            //console.log("end pinch");
                             finalScaleOffset = finalScaleOffset * ev.scale;
                             scaleOffset = 1;
                         }
@@ -706,7 +706,7 @@ var HuddleCanvas = (function() {
                         ////canvas.debugAppend(rotationOffsetY);
 
                         if (ev.srcEvent.type == "touchend" && rotationOffset != 0) {
-                            console.log("end rotate");
+                            //console.log("end rotate");
                             finalRotationOffset += rotationOffset;
                             finalRotationOffset = boundAngle(finalRotationOffset);
                             rotationOffset = 0;
