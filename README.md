@@ -90,7 +90,7 @@ The testLayer div will be automatically resized by the API to fit the canvas (bu
 
 You can style and position any children of testLayer as you would any other element.  You can also style testLayer's appearance in any way you want (except for variables like width and height, if you change these it could cause problems).
 
-You may find your layers aren't visile, this is probably because they are behind the background, to fix this you just need to give them a z-index in CSS that is greater than 1:
+You may find your layers aren't visible, this is probably because they are behind the background, to fix this you just need to give them a z-index in CSS that is greater than 1:
 ```css
 #testLayer{
 	z-index: 10;	
