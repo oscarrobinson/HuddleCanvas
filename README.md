@@ -9,16 +9,13 @@ To get a basic idea of what Huddle and HuddleCanvas allows you to create with a 
 To use HuddleCanvas you need [Meteor](http://www.meteor.com)<br>
 `$ curl https://install.meteor.com/ | sh`
 
-Then install Meteor's package manager, Meteorite<br>
-`$ [sudo] npm install -g meteorite`
-
 To create a project using HuddleCanvas:<br>
 `$ meteor create myhuddleproject`<br>
 `$ cd myhuddleproject` <br>
-`$ mrt add huddlecanvas`
+`meteor add scarrobin:huddlecanvas`
 
 <b>NOTE:</b> the huddlecanvas package is dependent on the 'huddle' package, this is supposed to install automatically when adding huddlecanvas but for some reason it doesn't work properly when this has happened.  Therefore, to ensure your project works also do:<br>
-`$ mrt add huddle`<br>
+`meteor add raedle:huddle`<br>
 
 ##Using HuddleCanvas - The Basics
 HuddleCanvas adds its HTML code to a div with the tag `huddle-canvas-container`, so your main HTML document should look something like this:
@@ -44,6 +41,16 @@ var canvas = HuddleCanvas.create("huddle-orbiter.proxemicinteractions.org", 6000
 ```
 
 For instructions on setting up the Huddle-Orbiter (a simulator for Huddle), go [here](https://github.com/raedle/meteor-huddle/blob/master/README.md)
+
+##Using HuddleCanvas - Background Image
+
+When you create a canvas, you can add a background image which the user will be able to explore.  The background image is scaled to fit the desktop area available to Huddle.  To add a background image, we pass the create() function a settings object as the last parameter:
+
+```javascript
+var canvas = HuddleCanvas.create([PATH TO YOUR HUDDLE SERVER], [PORT FOR YOUR HUDDLE SERVER], "HuddleName", {
+	backgroundImage: "path/to/image.png"
+});
+```
 
 ##Using HuddleCanvas - Adding Layers
 
@@ -96,16 +103,6 @@ canvas.addLayer("layer3");
 and if we then wanted to hide layer 1 we simply do:
 ```javascript
 canvas.removeLayer("layer1");
-```
-
-##Using HuddleCanvas - Background Image
-
-When you create a canvas, you can add a background image which the user will be able to explore.  The background image is scaled to fit the desktop area available to Huddle.  To add a background image, we pass the create() function a settings object as the last parameter:
-
-```javascript
-var canvas = HuddleCanvas.create([PATH TO YOUR HUDDLE SERVER], [PORT FOR YOUR HUDDLE SERVER], "HuddleName", {
-	backgroundImage: "path/to/image.png"
-});
 ```
 
 ##Using HuddleCanvas - The Debug Box
