@@ -305,7 +305,7 @@ var HuddleCanvas = (function() {
 
                         for (var y = 0; y < imageHeight; y += tileHeight) {
                             for (var x = 0; x < imageWidth; x += tileWidth) {
-                                $('#huddle-canvas-background').append('<div class="tile" id="tile-' + x + '-' + y + '">' + x + ' ' + y + '</div>')
+                                $('#huddle-canvas-background').append('<div class="tile" id="tile-' + x + '-' + y + '"></div>')
                                 $('#tile-' + x + '-' + y).css({
                                     'position': 'absolute',
                                     'top': y + 'px',
