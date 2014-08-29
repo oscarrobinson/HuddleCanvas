@@ -139,14 +139,22 @@ canvas.debugWrite("currentPosition: "+ xPos);
 canvas.debugAppend("This appears underneath");
 ```
 
-##Using HuddleCanvas - Panning
+##Using HuddleCanvas - Panning, Scaling and Rotating
 
-HuddleCanvas has built in touch panning of the canvas. This is mirrored across all devices in the Huddle as if they were one large screen.  <b>This is enabled by default.</b>  If you want to disable this, just say so when creating your canvas:
+HuddleCanvas has built in touch panning, rotating and scaling of the canvas. This is mirrored across all devices in the Huddle as if they were one large screen.  <b>This is all enabled by default.</b>  If you want to disable all this, just say so when creating your canvas:
 ```javascript
 var canvas = HuddleCanvas.create([PATH TO YOUR HUDDLE SERVER], [PORT FOR YOUR HUDDLE SERVER], "HuddleName", {
 	panningEnabled: false
 });
 ```
+You can also individually disable rotating and scaling:
+```javascript
+var canvas = HuddleCanvas.create([PATH TO YOUR HUDDLE SERVER], [PORT FOR YOUR HUDDLE SERVER], "HuddleName", {
+	scalingEnabled: false,
+	rotationEnabled: false
+});
+```
+
 
 ##Using HuddleCanvas - Callbacks
 
@@ -175,7 +183,9 @@ All the settings available to change when calling the create method are listed h
 	showDebugBox: false,
 	layers: [],
 	callbacks: [],
-	useTiles: false
+	useTiles: false,
+	scalingEnabled: true,
+	rotationEnabled: true
 }
 ```
 
