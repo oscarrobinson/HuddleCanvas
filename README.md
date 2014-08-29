@@ -42,6 +42,16 @@ var canvas = HuddleCanvas.create("huddle-orbiter.proxemicinteractions.org", 6000
 
 For instructions on setting up the Huddle-Orbiter (a simulator for Huddle), go [here](https://github.com/raedle/meteor-huddle/blob/master/README.md)
 
+##Using HuddleCanvas - Background Image
+
+When you create a canvas, you can add a background image which the user will be able to explore.  The background image is scaled to fit the desktop area available to Huddle.  To add a background image, we pass the create() function a settings object as the last parameter:
+
+```javascript
+var canvas = HuddleCanvas.create([PATH TO YOUR HUDDLE SERVER], [PORT FOR YOUR HUDDLE SERVER], "HuddleName", {
+	backgroundImage: "path/to/image.png"
+});
+```
+
 ##Using HuddleCanvas - Adding Layers
 
 An explorable image is cool but what if you want to add some information to be overlaid on the image.  Well this is where HuddleCanvas layers come in.  Adding a layer to your canvas is as simple as adding a div inside the huddle-canvas-container div and passing it to the canvas when the canvas is initialised:
@@ -93,16 +103,6 @@ canvas.addLayer("layer3");
 and if we then wanted to hide layer 1 we simply do:
 ```javascript
 canvas.removeLayer("layer1");
-```
-
-##Using HuddleCanvas - Background Image
-
-When you create a canvas, you can add a background image which the user will be able to explore.  The background image is scaled to fit the desktop area available to Huddle.  To add a background image, we pass the create() function a settings object as the last parameter:
-
-```javascript
-var canvas = HuddleCanvas.create([PATH TO YOUR HUDDLE SERVER], [PORT FOR YOUR HUDDLE SERVER], "HuddleName", {
-	backgroundImage: "path/to/image.png"
-});
 ```
 
 ##Using HuddleCanvas - The Debug Box
