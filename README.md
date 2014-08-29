@@ -224,6 +224,11 @@ feedSize[0]; //x size
 feedSize[1]; //y size
 ```
 
+####getTotalRotation()
+Returns the current angle of the canvas rendered on the device:
+```javascript
+var angle = canvas.getTotalRotation();
+```
 
 ###Panning
 
