@@ -138,6 +138,10 @@ var HuddleCanvas = (function() {
         panLocked = false;
     }
 
+    function publicGetTotalRotation() {
+        return totalRotation;
+    }
+
     function applyAllBrowsers(element, action, parameters) {
         var browserPrefixes = [
             "-o-",
@@ -842,7 +846,8 @@ var HuddleCanvas = (function() {
         getFeedSize: publicGetFeedSize,
         getHuddleData: publicGetHuddleData,
         getHuddleContainerId: publicGetHuddleContainerId,
-        getHuddleSessionServer: publicGetHuddleSessionServer
+        getHuddleSessionServer: publicGetHuddleSessionServer,
+        getTotalRotation: publicGetTotalRotation
     }
 })();
 
