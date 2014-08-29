@@ -12,10 +12,10 @@ To use HuddleCanvas you need [Meteor](http://www.meteor.com)<br>
 To create a project using HuddleCanvas:<br>
 `$ meteor create myhuddleproject`<br>
 `$ cd myhuddleproject` <br>
-`meteor add scarrobin:huddlecanvas`
+`$ meteor add scarrobin:huddlecanvas`
 
 <b>NOTE:</b> the huddlecanvas package is dependent on the 'huddle' package, this is supposed to install automatically when adding huddlecanvas but for some reason it doesn't work properly when this has happened.  Therefore, to ensure your project works also do:<br>
-`meteor add raedle:huddle`<br>
+`$ meteor add raedle:huddle`<br>
 
 ##Using HuddleCanvas - The Basics
 HuddleCanvas adds its HTML code to a div with the tag `huddle-canvas-container`, so your main HTML document should look something like this:
