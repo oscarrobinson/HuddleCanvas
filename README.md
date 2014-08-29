@@ -9,16 +9,13 @@ To get a basic idea of what Huddle and HuddleCanvas allows you to create with a 
 To use HuddleCanvas you need [Meteor](http://www.meteor.com)<br>
 `$ curl https://install.meteor.com/ | sh`
 
-Then install Meteor's package manager, Meteorite<br>
-`$ [sudo] npm install -g meteorite`
-
 To create a project using HuddleCanvas:<br>
 `$ meteor create myhuddleproject`<br>
 `$ cd myhuddleproject` <br>
-`$ mrt add huddlecanvas`
+`meteor add scarrobin:huddlecanvas`
 
 <b>NOTE:</b> the huddlecanvas package is dependent on the 'huddle' package, this is supposed to install automatically when adding huddlecanvas but for some reason it doesn't work properly when this has happened.  Therefore, to ensure your project works also do:<br>
-`$ mrt add huddle`<br>
+`meteor add raedle:huddle`<br>
 
 ##Using HuddleCanvas - The Basics
 HuddleCanvas adds its HTML code to a div with the tag `huddle-canvas-container`, so your main HTML document should look something like this:
