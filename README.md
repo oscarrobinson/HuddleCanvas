@@ -52,6 +52,22 @@ var canvas = HuddleCanvas.create([PATH TO YOUR HUDDLE SERVER], [PORT FOR YOUR HU
 });
 ```
 
+###Tiled Background
+Due to memory constraints, some mobile web browsers scale down large images to improve performance.  This can result in background images looking fuzzy and low res.  To get around this, HuddleCanvas has a mechanism to allow you to create tiled images so that your image is split into smaller chunks which are then positioned to create the large image.  This ensures your image looks sharp on all devices.
+
+To convert your image into tiles, use [HuddleTileCreator](https://github.com/scarrobin/HuddleTileCreator), just follow the instructions in its README.
+
+You then put the tiles into a folder named 'tiles' in the 'public' directory of your Meteor project.  Don't put them anywhere else or HuddleCanvas won't know where to find them.
+
+Then all you need to do is turn on image tiling in your settings:
+```javascript
+var canvas = HuddleCanvas.create([PATH TO YOUR HUDDLE SERVER], [PORT FOR YOUR HUDDLE SERVER], "HuddleName", {
+	useTiles: true
+});
+```
+
+
+
 ##Using HuddleCanvas - Adding Layers
 
 An explorable image is cool but what if you want to add some information to be overlaid on the image.  Well this is where HuddleCanvas layers come in.  Adding a layer to your canvas is as simple as adding a div inside the huddle-canvas-container div and passing it to the canvas when the canvas is initialised:
@@ -158,7 +174,8 @@ All the settings available to change when calling the create method are listed h
 	backgroundImage: "",
 	showDebugBox: false,
 	layers: [],
-	callbacks: []
+	callbacks: [],
+	useTiles: false
 }
 ```
 
