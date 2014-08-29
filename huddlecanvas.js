@@ -56,7 +56,8 @@ var HuddleCanvas = (function() {
         layers: [],
         callbacks: [],
         scalingEnabled: true,
-        rotationEnabled: true
+        rotationEnabled: true,
+        useTiles: false
     }
 
     function publicInit(computerVisionServer, computerVisionPort, huddleName, settingsParam) {
@@ -87,7 +88,11 @@ var HuddleCanvas = (function() {
             if (settingsParam.rotationEnabled !== undefined) {
                 settings.rotationEnabled = settingsParam.rotationEnabled;
             }
+            if (settingsParam.useTiles !== undefined) {
+                settings.useTiles = settingsParam.useTiles;
+            }
         }
+
         huddle.connect(computerVisionServer, computerVisionPort);
         sessionServer = computerVisionServer + computerVisionPort;
         PanPosition = HuddleCanvasCollections.getPanPositions();
@@ -233,6 +238,10 @@ var HuddleCanvas = (function() {
             }
 
 
+            $('#' + huddleContainerId).prepend("<div id=\"touchoverlay\" style=\"z-index:1;\"></div>");
+            settings.layers.push('touchoverlay');
+
+
             //get the viewport size
             var windowWidth = $(window).width();
             var windowHeight = $(window).height();
@@ -283,12 +292,41 @@ var HuddleCanvas = (function() {
                     var backgroundDiv = document.createElement('div');
                     backgroundDiv.id = "huddle-canvas-background";
                     document.getElementById(huddleContainerId).appendChild(backgroundDiv);
-                    $("#huddle-canvas-background").css('background-repeat', 'no-repeat');
-                    $("#huddle-canvas-background").css('z-index', 1);
-                    $("#huddle-canvas-background").css('background-image', 'url(' + settings.imgSrcPath + ')');
-                    $("#huddle-canvas-background").css('position', 'absolute');
-                    $("#huddle-canvas-background").css('background-position', 'left top');
-                    $("#huddle-canvas-background").css('background-size', 'contain');
+
+                    var tileWidth = 500;
+                    var tileHeight = 500;
+                    $('#huddle-canvas-background').css({
+                        'width': imageWidth + 'px',
+                        'height': imageHeight + 'px',
+                        'z-index': 0
+                    })
+
+                    if (settings.useTiles) {
+
+                        for (var y = 0; y < imageHeight; y += tileHeight) {
+                            for (var x = 0; x < imageWidth; x += tileWidth) {
+                                $('#huddle-canvas-background').append('<div class="tile" id="tile-' + x + '-' + y + '">' + x + ' ' + y + '</div>')
+                                $('#tile-' + x + '-' + y).css({
+                                    'position': 'absolute',
+                                    'top': y + 'px',
+                                    'left': x + 'px',
+                                    'width': tileWidth,
+                                    'height': tileHeight,
+                                    'background-image': 'url(\'../../tiles/tile-' + x + '-' + y + '.png\')',
+                                    'background-repeat': 'no-repeat'
+                                });
+                            }
+                        }
+                    } else {
+                        $("#huddle-canvas-background").css('background-repeat', 'no-repeat');
+                        $("#huddle-canvas-background").css('z-index', 0);
+                        $("#huddle-canvas-background").css('background-image', 'url(' + settings.imgSrcPath + ')');
+                        $("#huddle-canvas-background").css('position', 'absolute');
+                        $("#huddle-canvas-background").css('background-position', 'left top');
+                        $("#huddle-canvas-background").css('background-size', 'contain');
+
+                    }
+
 
                     settings.layers.push("huddle-canvas-background");
 
@@ -344,6 +382,7 @@ var HuddleCanvas = (function() {
                 var move_finalScaleOffset = 1;
                 var move_scaleOffsetX = 0;
                 var move_scaleOffsetY = 0;
+
 
 
                 //offsetX and offsetY take into account touch panning, we need to get them from our meteor collection so it's synced across all devices in the huddle
@@ -504,6 +543,7 @@ var HuddleCanvas = (function() {
                     applyAllBrowsers(id, 'transform', transformation);
                 }
 
+
                 //rotation offset from touch
                 //existingCanvasAngle = getCanvasAngle();
                 /*canvas.debugWrite("rotationOffset: " + rotationOffset);
@@ -649,6 +689,8 @@ var HuddleCanvas = (function() {
 
                 hammertime.on('pan rotate pinch', function(ev) {
                     ev.preventDefault();
+
+                    //console.log(ev);
 
                     //we don't pan if the pan lock is on
                     if (panLocked == true) {
