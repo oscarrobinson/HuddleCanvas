@@ -109,7 +109,7 @@ var HuddleCanvas = (function() {
     }
 
     function publicGetTotalScale() {
-        return scaleOffset * finalScaleOffset;
+        return finalScaleOffset;
     }
 
     function publicGetHuddleContainerId() {
