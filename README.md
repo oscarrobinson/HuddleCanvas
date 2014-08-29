@@ -90,6 +90,14 @@ The testLayer div will be automatically resized by the API to fit the canvas (bu
 
 You can style and position any children of testLayer as you would any other element.  You can also style testLayer's appearance in any way you want (except for variables like width and height, if you change these it could cause problems).
 
+You may find your layers aren't visile, this is probably because they are behind the background, to fix this you just need to give them a z-index in CSS that is greater than 1:
+```css
+#testLayer{
+	z-index: 10;	
+}
+```
+
+
 You can add as many layers as you want to your canvas and as they're simply HTML elements, you can add scripts to these elements as you normally would.  Want to make a layer with D3 visualisations? It's easy with HuddleCanvas.
 
 You can also add and remove layers to your canvas dynamically.  You define the layers in your HTML as before but if they're not passed to the HuddleCanvas they won't be rendered.  Let's look at an example:
