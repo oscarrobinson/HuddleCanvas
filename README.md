@@ -12,10 +12,10 @@ To use HuddleCanvas you need [Meteor](http://www.meteor.com)<br>
 To create a project using HuddleCanvas:<br>
 `$ meteor create myhuddleproject`<br>
 `$ cd myhuddleproject` <br>
-`meteor add scarrobin:huddlecanvas`
+`$ meteor add scarrobin:huddlecanvas`
 
 <b>NOTE:</b> the huddlecanvas package is dependent on the 'huddle' package, this is supposed to install automatically when adding huddlecanvas but for some reason it doesn't work properly when this has happened.  Therefore, to ensure your project works also do:<br>
-`meteor add raedle:huddle`<br>
+`$ meteor add raedle:huddle`<br>
 
 ##Using HuddleCanvas - The Basics
 HuddleCanvas adds its HTML code to a div with the tag `huddle-canvas-container`, so your main HTML document should look something like this:
@@ -52,6 +52,22 @@ var canvas = HuddleCanvas.create([PATH TO YOUR HUDDLE SERVER], [PORT FOR YOUR HU
 });
 ```
 
+###Tiled Background
+Due to memory constraints, some mobile web browsers scale down large images to improve performance.  This can result in background images looking fuzzy and low res.  To get around this, HuddleCanvas has a mechanism to allow you to create tiled images so that your image is split into smaller chunks which are then positioned to create the large image.  This ensures your image looks sharp on all devices.
+
+To convert your image into tiles, use [HuddleTileCreator](https://github.com/scarrobin/HuddleTileCreator), just follow the instructions in its README.
+
+You then put the tiles into a folder named 'tiles' in the 'public' directory of your Meteor project.  Don't put them anywhere else or HuddleCanvas won't know where to find them.
+
+Then all you need to do is turn on image tiling in your settings:
+```javascript
+var canvas = HuddleCanvas.create([PATH TO YOUR HUDDLE SERVER], [PORT FOR YOUR HUDDLE SERVER], "HuddleName", {
+	useTiles: true
+});
+```
+
+
+
 ##Using HuddleCanvas - Adding Layers
 
 An explorable image is cool but what if you want to add some information to be overlaid on the image.  Well this is where HuddleCanvas layers come in.  Adding a layer to your canvas is as simple as adding a div inside the huddle-canvas-container div and passing it to the canvas when the canvas is initialised:
@@ -73,6 +89,14 @@ var canvas = HuddleCanvas.create("huddle-orbiter.proxemicinteractions.org", 6000
 The testLayer div will be automatically resized by the API to fit the canvas (but bear in mind depending on its aspect ratio, your background image may not cover the whole canvas).
 
 You can style and position any children of testLayer as you would any other element.  You can also style testLayer's appearance in any way you want (except for variables like width and height, if you change these it could cause problems).
+
+You may find your layers aren't visible, this is probably because they are behind the background, to fix this you just need to give them a z-index in CSS that is greater than 1:
+```css
+#testLayer{
+	z-index: 10;	
+}
+```
+
 
 You can add as many layers as you want to your canvas and as they're simply HTML elements, you can add scripts to these elements as you normally would.  Want to make a layer with D3 visualisations? It's easy with HuddleCanvas.
 
@@ -123,14 +147,22 @@ canvas.debugWrite("currentPosition: "+ xPos);
 canvas.debugAppend("This appears underneath");
 ```
 
-##Using HuddleCanvas - Panning
+##Using HuddleCanvas - Panning, Scaling and Rotating
 
-HuddleCanvas has built in touch panning of the canvas. This is mirrored across all devices in the Huddle as if they were one large screen.  <b>This is enabled by default.</b>  If you want to disable this, just say so when creating your canvas:
+HuddleCanvas has built in touch panning, rotating and scaling of the canvas. This is mirrored across all devices in the Huddle as if they were one large screen.  <b>This is all enabled by default.</b>  If you want to disable all this, just say so when creating your canvas:
 ```javascript
 var canvas = HuddleCanvas.create([PATH TO YOUR HUDDLE SERVER], [PORT FOR YOUR HUDDLE SERVER], "HuddleName", {
 	panningEnabled: false
 });
 ```
+You can also individually disable rotating and scaling:
+```javascript
+var canvas = HuddleCanvas.create([PATH TO YOUR HUDDLE SERVER], [PORT FOR YOUR HUDDLE SERVER], "HuddleName", {
+	scalingEnabled: false,
+	rotationEnabled: false
+});
+```
+
 
 ##Using HuddleCanvas - Callbacks
 
@@ -158,7 +190,10 @@ All the settings available to change when calling the create method are listed h
 	backgroundImage: "",
 	showDebugBox: false,
 	layers: [],
-	callbacks: []
+	callbacks: [],
+	useTiles: false,
+	scalingEnabled: true,
+	rotationEnabled: true
 }
 ```
 
@@ -197,6 +232,11 @@ feedSize[0]; //x size
 feedSize[1]; //y size
 ```
 
+####getTotalRotation()
+Returns the current angle of the canvas rendered on the device:
+```javascript
+var angle = canvas.getTotalRotation();
+```
 
 ###Panning
 
