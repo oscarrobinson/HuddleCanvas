@@ -11,7 +11,7 @@ var HuddleCanvasCollections = (function() {
 })();
 
 if (Meteor.isClient) {
-    Meteor.subscribe('panPosition');
+    window.panPositionSubscription = Meteor.subscribe('panPosition');
     window.HuddleCanvasCollections = HuddleCanvasCollections;
 }
 

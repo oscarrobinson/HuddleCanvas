@@ -60,6 +60,17 @@ var HuddleCanvas = (function() {
         useTiles: false
     }
 
+    function checkSubscription() {
+        console.log(window.panPositionSubscription.ready());
+        if (window.panPositionSubscription.ready()) {
+            loadCanvas()
+        } else {
+            setTimeout(function() {
+                checkSubscription()
+            }, 10);
+        }
+    }
+
     function publicInit(computerVisionServer, computerVisionPort, huddleName, settingsParam) {
         huddle = Huddle.client(huddleName);
         if (settingsParam != undefined) {
@@ -96,7 +107,7 @@ var HuddleCanvas = (function() {
         huddle.connect(computerVisionServer, computerVisionPort);
         sessionServer = computerVisionServer + computerVisionPort;
         PanPosition = HuddleCanvasCollections.getPanPositions();
-        loadCanvas();
+        checkSubscription();
         return this;
     }
 
