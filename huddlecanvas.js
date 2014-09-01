@@ -61,7 +61,7 @@ var HuddleCanvas = (function() {
     }
 
     function checkSubscription() {
-        console.log(window.panPositionSubscription.ready());
+        //console.log(window.panPositionSubscription.ready());
         if (window.panPositionSubscription.ready()) {
             loadCanvas()
         } else {
@@ -417,7 +417,7 @@ var HuddleCanvas = (function() {
                         }
                         //if we don't, create one
                         else {
-                            //console.log("FINAL ROTATION BECOMES 0");
+                            ////console.log("FINAL ROTATION BECOMES 0");
                             sessionOffsetId = PanPosition.insert({
                                 sessionId: sessionServer,
                                 offsetX: 0,
@@ -514,7 +514,7 @@ var HuddleCanvas = (function() {
                     .attr("r", 10)
                     .style("fill", "green"); */
 
-                //console.log("rotationOffset: " + move_rotationOffset + " || finalRotationOffset: " + move_finalRotationOffset);
+                ////console.log("rotationOffset: " + move_rotationOffset + " || finalRotationOffset: " + move_finalRotationOffset);
 
                 /*d3.select("#testlayer").append("circle")
                     .attr("cx", scaleOffsetX)
@@ -673,7 +673,7 @@ var HuddleCanvas = (function() {
                         sessionId: sessionServer
                     });
                     if (!doc) {
-                        //console.log("FINAL ROTATION BECOMES 0");
+                        ////console.log("FINAL ROTATION BECOMES 0");
                         sessionOffsetId = PanPosition.insert({
                             sessionId: sessionServer,
                             offsetX: 0,
@@ -692,7 +692,7 @@ var HuddleCanvas = (function() {
                     } else {
                         sessionOffsetId = doc._id;
                     }
-                    //console.log(sessionOffsetId);
+                    ////console.log(sessionOffsetId);
                 }
 
                 var hammerCanvas = document.getElementsByTagName("body")[0];
@@ -709,7 +709,7 @@ var HuddleCanvas = (function() {
                 hammertime.on('pan rotate pinch', function(ev) {
                     ev.preventDefault();
 
-                    //console.log(ev);
+                    ////console.log(ev);
 
                     //we don't pan if the pan lock is on
                     if (panLocked == true) {
@@ -724,12 +724,12 @@ var HuddleCanvas = (function() {
 
                     ////canvas.debugWrite(ev.type);
                     if (ev.type == "pinch") {
-                        //console.log(ev);
+                        ////console.log(ev);
                         scaleOffset = ev.scale;
                         scaleOffsetX = ev.center.x + (-publicGetOffsets()[0]);
                         scaleOffsetY = ev.center.y + (-publicGetOffsets()[1]);
                         if (ev.srcEvent.type == "touchend") {
-                            //console.log("end pinch");
+                            ////console.log("end pinch");
                             finalScaleOffset = finalScaleOffset * ev.scale;
                             scaleOffset = 1;
                         }
@@ -747,7 +747,7 @@ var HuddleCanvas = (function() {
 
                     if (ev.rotation) {
                         var eventRotation = ev.rotation;
-                        //console.log(ev);
+                        ////console.log(ev);
 
                         //eventRotation = boundAngle(eventRotation);
 
@@ -767,7 +767,7 @@ var HuddleCanvas = (function() {
                         ////canvas.debugAppend(rotationOffsetY);
 
                         if (ev.srcEvent.type == "touchend" && rotationOffset != 0) {
-                            //console.log("end rotate");
+                            ////console.log("end rotate");
                             finalRotationOffset += rotationOffset;
                             finalRotationOffset = boundAngle(finalRotationOffset);
                             rotationOffset = 0;
@@ -794,7 +794,7 @@ var HuddleCanvas = (function() {
                         }
                     });
 
-                    //console.log(PanPosition.findOne(sessionOffsetId));
+                    ////console.log(PanPosition.findOne(sessionOffsetId));
 
                     if (ev.isFinal) {
                         //update our current offset to mirror others in the huddle
@@ -833,7 +833,7 @@ var HuddleCanvas = (function() {
             //Prevents elastic scrolling on iOS
             //stolen from https://gist.github.com/amolk/1599412
             document.body.addEventListener('touchmove', function(event) {
-                //console.log(event.source);
+                ////console.log(event.source);
                 event.preventDefault();
             }, false);
 
