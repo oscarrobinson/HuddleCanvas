@@ -564,8 +564,10 @@ var HuddleCanvas = (function() {
                     applyAllBrowsers(id, 'transform', transformation);
                 }
 
-                //do on move callbacl
-                settings.onMoveCallback();
+                //do on move callback
+                if (!firstRun) {
+                    settings.onMoveCallback();
+                }
 
 
                 //rotation offset from touch
