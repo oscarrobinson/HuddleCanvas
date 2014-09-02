@@ -3,7 +3,7 @@
     "description": "allows easy use of the meteorite Huddle module to create explorable images and add layers of information",
     "homepage": "https://github.com/scarrobin/HuddleCanvas",
     "author": "Oscar Robinson, Jonny Manfield",
-    "version": "0.7.6",
+    "version": "0.8.0",
     "git": "https://github.com/scarrobin/HuddleCanvas.git",
     "packages": {
         "huddle": {}

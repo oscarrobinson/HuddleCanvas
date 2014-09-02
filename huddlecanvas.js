@@ -54,7 +54,8 @@ var HuddleCanvas = (function() {
         panningEnabled: true,
         imgSrcPath: "",
         layers: [],
-        callbacks: [],
+        onLoadCallback: function() {},
+        onMoveCallback: function() {},
         scalingEnabled: true,
         rotationEnabled: true,
         useTiles: false
@@ -88,10 +89,11 @@ var HuddleCanvas = (function() {
                     settings.layers.push(settingsParam.layers[u]);
                 }
             }
-            if (settingsParam.callbacks !== undefined) {
-                for (var u = 0; u < settingsParam.callbacks.length; u++) {
-                    settings.callbacks.push(settingsParam.callbacks[u]);
-                }
+            if (settingsParam.onLoadCallback !== undefined) {
+                settings.onLoadCallback = settingsParam.onLoadCallback;
+            }
+            if (settingsParam.onMoveCallback !== undefined) {
+                settings.onMoveCallback = settingsParam.onMoveCallback;
             }
             if (settingsParam.scalingEnabled !== undefined) {
                 settings.scalingEnabled = settingsParam.scalingEnabled;
@@ -562,6 +564,9 @@ var HuddleCanvas = (function() {
                     applyAllBrowsers(id, 'transform', transformation);
                 }
 
+                //do on move callbacl
+                settings.onMoveCallback();
+
 
                 //rotation offset from touch
                 //existingCanvasAngle = getCanvasAngle();
@@ -603,11 +608,9 @@ var HuddleCanvas = (function() {
 
                 $("#huddle-canvas-background").css('position', 'absolute');
 
-                //do any callbacks passed to the canvas if first run and we have a feed size
+                //do onLoad callback if first run and we have a feed size
                 if (firstRun && feedWidth != 0 && feedHeight != 0) {
-                    for (var cq = 0; cq < settings.callbacks.length; cq++) {
-                        settings.callbacks[cq]();
-                    }
+                    settings.onLoadCallback();
                     firstRun = false;
                 }
 
@@ -728,6 +731,8 @@ var HuddleCanvas = (function() {
                         scaleOffset = ev.scale;
                         scaleOffsetX = ev.center.x + (-publicGetOffsets()[0]);
                         scaleOffsetY = ev.center.y + (-publicGetOffsets()[1]);
+
+
                         if (ev.srcEvent.type == "touchend") {
                             ////console.log("end pinch");
                             finalScaleOffset = finalScaleOffset * ev.scale;
