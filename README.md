@@ -166,17 +166,15 @@ var canvas = HuddleCanvas.create([PATH TO YOUR HUDDLE SERVER], [PORT FOR YOUR HU
 
 ##Using HuddleCanvas - Callbacks
 
-You can pass callbacks to HuddleCanvas when you create a new instance, these will be excecuted once the canvas has fully loaded and is receiving proper information from the Huddle API.  You pass callbacks as an array of functions in the settings object so you can have more than one function if you wish.  The functions are executed in the order they appear in the array:
+You can pass two types of callback to HuddleCanvas, one that will be executed once when the canvas has completely loaded and one that will execute every time the canvas's position is updated.  They're simple to use as you just pass them to HuddleCanvas when you create a new instance:
 ```javascript
-canvas = HuddleCanvas.create([PATH TO YOUR HUDDLE SERVER], [PORT FOR YOUR HUDDLE SERVER], "HuddleName", {
-	callbacks:[
-		function(){
-			console.log("canvas loaded :)");
-		},
-		function(aParam){
-			console.log(canvas.getOffsets()[0]*aParam);
-		}
-	]
+var canvas = HuddleCanvas.create([PATH TO YOUR HUDDLE SERVER], [PORT FOR YOUR HUDDLE SERVER], "HuddleName", {
+        onLoadCallback: function() {
+            console.log("loaded canvas :)");
+        },
+        onMoveCallback: function() {
+            console.log("moved canvas :)");
+        }
 });
 ```
 
@@ -185,16 +183,17 @@ canvas = HuddleCanvas.create([PATH TO YOUR HUDDLE SERVER], [PORT FOR YOUR HUDDLE
 All the settings available to change when calling the create method are listed here along with their default values:
 
 ```javascript
-{
-	panningEnabled: true,
-	backgroundImage: "",
-	showDebugBox: false,
-	layers: [],
-	callbacks: [],
-	useTiles: false,
-	scalingEnabled: true,
-	rotationEnabled: true
-}
+    var settings = {
+        showDebugBox: false,
+        panningEnabled: true,
+        imgSrcPath: "",
+        layers: [],
+        onLoadCallback: function() {},
+        onMoveCallback: function() {},
+        scalingEnabled: true,
+        rotationEnabled: true,
+        useTiles: false
+    }
 ```
 
 ##Additional Functions
