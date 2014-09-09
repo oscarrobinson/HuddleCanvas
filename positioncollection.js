@@ -1,5 +1,5 @@
 var HuddleCanvasCollections = (function() {
-    PanPositionCollection = new Meteor.Collection('panPosition');
+    PanPositionCollection = new Mongo.Collection('panPosition');
 
     var getPanPositionCollection = function() {
         return PanPositionCollection;
