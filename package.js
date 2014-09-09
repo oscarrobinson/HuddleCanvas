@@ -1,5 +1,6 @@
 Package.onUse(function(api) {
     api.use('jquery@1.0.0', 'client');
+    api.use('mongo', ['client', 'server']);
     api.imply('jquery@1.0.0', 'client');
     api.add_files([
         'hammer.js',
@@ -12,7 +13,7 @@ Package.onUse(function(api) {
 
 Package.describe({
     summary: "Create explorable layers for use with Huddle",
-    version: "0.8.2",
+    version: "0.8.3",
     name: "scarrobin:huddlecanvas",
     git: 'https://github.com/scarrobin/HuddleCanvas.git'
 });
