@@ -1,6 +1,6 @@
 Package.onUse(function(api) {
     api.use('jquery@1.0.0', 'client');
-    api.use('mongo', ['client', 'server']);
+    api.use('mongo@1.0.4', ['client', 'server']);
     api.imply('jquery@1.0.0', 'client');
     api.add_files([
         'hammer.js',
