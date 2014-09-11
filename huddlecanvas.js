@@ -122,7 +122,11 @@ var HuddleCanvas = (function() {
     }
 
     function publicGetTotalScale() {
-        return finalScaleOffset;
+        if (settings.scalingEnabled) {
+            return finalScaleOffset;
+        } else {
+            return 1;
+        }
     }
 
     function publicGetHuddleContainerId() {
@@ -156,7 +160,12 @@ var HuddleCanvas = (function() {
     }
 
     function publicGetTotalRotation() {
-        return totalRotation;
+        if (settings.rotationEnabled) {
+            return totalRotation;
+        } else {
+            return 0;
+        }
+
     }
 
     function applyAllBrowsers(element, action, parameters) {
@@ -453,6 +462,10 @@ var HuddleCanvas = (function() {
                                 move_finalScaleOffset = offsets.finalScaleOffset;
                                 move_scaleOffsetX = offsets.scaleOffsetX;
                                 move_scaleOffsetY = offsets.scaleOffsetY;
+
+                                //set for getters too
+                                finalScaleOffset = offsets.finalScaleOffset;
+                                finalRotationOffset = offsets.finalRotationOffset;
                             }
                         }
                     }
