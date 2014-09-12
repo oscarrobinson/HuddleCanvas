@@ -5,6 +5,8 @@ Huddle canvas abstracts away the complex code of canvas exploration using the [h
 
 To get a basic idea of what Huddle and HuddleCanvas allows you to create with a tabletop of mobile devices, look at this [demo](http://scarrobin.github.io/HuddleCanvas/#demo)
 
+Want to look at an example of a complete, basic app using HuddleCanvas and [HuddleObject](https://github.com/jonnymanf/HuddleObject)? Try [huddle-chess](https://github.com/scarrobin/huddle-chess).
+
 ##Getting Started
 To use HuddleCanvas you need [Meteor](http://www.meteor.com)<br>
 `$ curl https://install.meteor.com/ | sh`
