@@ -163,7 +163,7 @@ var HuddleCanvas = (function() {
         if (settings.rotationEnabled) {
             return totalRotation;
         } else {
-            return 0;
+            return -currentDeviceAngle;
         }
 
     }
@@ -541,6 +541,7 @@ var HuddleCanvas = (function() {
 
                 if (settings.rotationEnabled && settings.scalingEnabled) {
                     var transformation =
+                        'scale(' + scaleX + ',' + scaleY + ') ' +
                         'translate(' + (-(containerWidth - move_scaleOffsetX)) + 'px,' + (-(containerHeight - move_scaleOffsetY)) + 'px)' +
                         'scale(' + move_scaleOffset * move_finalScaleOffset + ',' + move_scaleOffset * move_finalScaleOffset + ')' +
                         'translate(' + ((containerWidth - move_scaleOffsetX)) + 'px,' + ((containerHeight - move_scaleOffsetY)) + 'px)' +
@@ -553,6 +554,7 @@ var HuddleCanvas = (function() {
                     applyAllBrowsers(id, 'transform', transformation);
                 } else if (settings.rotationEnabled && !settings.scalingEnabled) {
                     var transformation =
+                        'scale(' + scaleX + ',' + scaleY + ') ' +
                         'translate(' + (-(containerWidth - rotationX)) + 'px,' + (-(containerHeight - rotationY)) + 'px)' +
                         'rotate(' + (-(rotation)) + 'deg)' +
                         'translate(' + (containerWidth - rotationX) + 'px,' + (containerHeight - rotationY) + 'px)' +
@@ -562,6 +564,7 @@ var HuddleCanvas = (function() {
                     applyAllBrowsers(id, 'transform', transformation);
                 } else if (settings.scalingEnabled && !settings.rotationEnabled) {
                     var transformation =
+                        'scale(' + scaleX + ',' + scaleY + ') ' +
                         'translate(' + (-(containerWidth - move_scaleOffsetX)) + 'px,' + (-(containerHeight - move_scaleOffsetY)) + 'px)' +
                         'scale(' + move_scaleOffset * move_finalScaleOffset + ',' + move_scaleOffset * move_finalScaleOffset + ')' +
                         'translate(' + ((containerWidth - move_scaleOffsetX)) + 'px,' + ((containerHeight - move_scaleOffsetY)) + 'px)' +
@@ -571,6 +574,7 @@ var HuddleCanvas = (function() {
                     applyAllBrowsers(id, 'transform', transformation);
                 } else {
                     var transformation =
+                        'scale(' + scaleX + ',' + scaleY + ') ' +
                         'translate(' + (-(containerWidth - rotationX)) + 'px,' + (-(containerHeight - rotationY)) + 'px)' +
                         'rotate(' + (-(rotation)) + 'deg)' +
                         'translate(' + (containerWidth - rotationX) + 'px,' + (containerHeight - rotationY) + 'px)';
@@ -615,6 +619,7 @@ var HuddleCanvas = (function() {
                 //set feed width and height
                 feedWidth = ratio.X * windowWidth;
                 feedHeight = ratio.Y * windowHeight;
+
                 var feedAspectRatio = feedWidth / feedHeight;
 
                 //set width and height of canvases to correct values
