@@ -164,6 +164,13 @@ var canvas = HuddleCanvas.create([PATH TO YOUR HUDDLE SERVER], [PORT FOR YOUR HU
 	rotationEnabled: false
 });
 ```
+By default, scaling is limited to 4x zoom in and 0.4x zoom out, these parameters have been chosen as they provide best performance.  However, if you want to change them you can do so with the following settings:
+```javascript
+var canvas = HuddleCanvas.create([PATH TO YOUR HUDDLE SERVER], [PORT FOR YOUR HUDDLE SERVER], "HuddleName", {
+	maxScale: 10,
+	minScale: 0.5
+});
+```
 
 
 ##Using HuddleCanvas - Callbacks
@@ -194,7 +201,9 @@ All the settings available to change when calling the create method are listed h
         onMoveCallback: function() {},
         scalingEnabled: true,
         rotationEnabled: true,
-        useTiles: false
+        useTiles: false,
+        maxScale: 4,
+        minScale: 0.4
     }
 ```
 
