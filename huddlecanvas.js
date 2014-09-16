@@ -530,15 +530,15 @@ var HuddleCanvas = (function() {
                 if (settings.rotationEnabled && settings.scalingEnabled) {
                     var transformation =
                         'scale(' + scaleX + ',' + scaleY + ') ' +
-                        'translate(' + (-(containerWidth - move_scaleOffsetX)) + 'px,' + (-(containerHeight - move_scaleOffsetY)) + 'px)' +
-                        'scale(' + move_scaleOffset * move_finalScaleOffset + ',' + move_scaleOffset * move_finalScaleOffset + ')' +
-                        'translate(' + ((containerWidth - move_scaleOffsetX)) + 'px,' + ((containerHeight - move_scaleOffsetY)) + 'px)' +
                         'translate(' + (-(containerWidth - rotationX)) + 'px,' + (-(containerHeight - rotationY)) + 'px)' +
                         'rotate(' + (-(rotation)) + 'deg)' +
                         'translate(' + (containerWidth - rotationX) + 'px,' + (containerHeight - rotationY) + 'px)' +
                         'translate(' + (-(containerWidth - move_rotationOffsetX)) + 'px,' + (-(containerHeight - move_rotationOffsetY)) + 'px)' +
                         'rotate(' + (move_rotationOffset + move_finalRotationOffset) + 'deg)' +
-                        'translate(' + (containerWidth - move_rotationOffsetX) + 'px,' + (containerHeight - move_rotationOffsetY) + 'px)';
+                        'translate(' + (containerWidth - move_rotationOffsetX) + 'px,' + (containerHeight - move_rotationOffsetY) + 'px)' +
+                        'translate(' + (-(containerWidth - move_scaleOffsetX)) + 'px,' + (-(containerHeight - move_scaleOffsetY)) + 'px)' +
+                        'scale(' + move_scaleOffset * move_finalScaleOffset + ',' + move_scaleOffset * move_finalScaleOffset + ')' +
+                        'translate(' + ((containerWidth - move_scaleOffsetX)) + 'px,' + ((containerHeight - move_scaleOffsetY)) + 'px)';
                     applyAllBrowsers(id, 'transform', transformation);
                 } else if (settings.rotationEnabled && !settings.scalingEnabled) {
                     var transformation =
@@ -553,12 +553,12 @@ var HuddleCanvas = (function() {
                 } else if (settings.scalingEnabled && !settings.rotationEnabled) {
                     var transformation =
                         'scale(' + scaleX + ',' + scaleY + ') ' +
-                        'translate(' + (-(containerWidth - move_scaleOffsetX)) + 'px,' + (-(containerHeight - move_scaleOffsetY)) + 'px)' +
-                        'scale(' + move_scaleOffset * move_finalScaleOffset + ',' + move_scaleOffset * move_finalScaleOffset + ')' +
-                        'translate(' + ((containerWidth - move_scaleOffsetX)) + 'px,' + ((containerHeight - move_scaleOffsetY)) + 'px)' +
                         'translate(' + (-(containerWidth - rotationX)) + 'px,' + (-(containerHeight - rotationY)) + 'px)' +
                         'rotate(' + (-(rotation)) + 'deg)' +
-                        'translate(' + (containerWidth - rotationX) + 'px,' + (containerHeight - rotationY) + 'px)';
+                        'translate(' + (containerWidth - rotationX) + 'px,' + (containerHeight - rotationY) + 'px)' +
+                        'translate(' + (-(containerWidth - move_scaleOffsetX)) + 'px,' + (-(containerHeight - move_scaleOffsetY)) + 'px)' +
+                        'scale(' + move_scaleOffset * move_finalScaleOffset + ',' + move_scaleOffset * move_finalScaleOffset + ')' +
+                        'translate(' + ((containerWidth - move_scaleOffsetX)) + 'px,' + ((containerHeight - move_scaleOffsetY)) + 'px)';
                     applyAllBrowsers(id, 'transform', transformation);
                 } else {
                     var transformation =
@@ -593,7 +593,7 @@ var HuddleCanvas = (function() {
                 var ratio = data.RgbImageToDisplayRatio;
                 currentDeviceAngle = angle;
 
-                totalRotation = angle + rotationOffset + finalRotationOffset;
+                totalRotation = (-angle) + rotationOffset + finalRotationOffset;
                 totalRotation = boundAngle(totalRotation);
 
                 //set feed width and height
@@ -714,6 +714,9 @@ var HuddleCanvas = (function() {
                         return;
                     }
 
+
+                    publicDebugWrite(currentDeviceAngle);
+                    publicDebugAppend(finalScaleOffset * scaleOffset);
                     var angle = (currentDeviceAngle * Math.PI) / 180.0;
                     var dx = ev.deltaX;
                     var dy = ev.deltaY;
@@ -769,7 +772,7 @@ var HuddleCanvas = (function() {
                         if ((!(Math.abs(rotationOffset - eventRotation) > 10)) || Math.abs(eventRotation) < 10 || (!(Math.abs(Math.abs(rotationOffset) - Math.abs(eventRotation)) > 10))) {
                             rotationOffset = eventRotation;
                         }
-                        var rotation_rad = (totalRotation * Math.PI) / 180.0;
+
                         rotationOffsetX = ev.center.x + (-publicGetOffsets()[0]);
                         rotationOffsetY = ev.center.y + (-publicGetOffsets()[1]);
 
