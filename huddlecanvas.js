@@ -28,6 +28,8 @@ var HuddleCanvas = (function() {
     //holds huddle data for getter
     var getterData = {};
 
+
+    //various values to hold panning, rotation and scale values
     var totalRotation = 0;
 
     var currentDeviceAngle = 0;
@@ -58,11 +60,14 @@ var HuddleCanvas = (function() {
         onMoveCallback: function() {},
         scalingEnabled: true,
         rotationEnabled: true,
-        useTiles: false
+        useTiles: false,
+        maxScale: 4,
+        minScale: 0.4
     }
 
+    //we can't load the canvas until the subscription to the position collection is ready
+    //this function keeps checking until it is ready
     function checkSubscription() {
-        //console.log(window.panPositionSubscription.ready());
         if (window.panPositionSubscription.ready()) {
             loadCanvas()
         } else {
@@ -72,8 +77,11 @@ var HuddleCanvas = (function() {
         }
     }
 
+    //called on HuddleCanvas.create(...)
     function publicInit(computerVisionServer, computerVisionPort, huddleName, settingsParam) {
         huddle = Huddle.client(huddleName);
+
+        //get our settings values
         if (settingsParam != undefined) {
             if (settingsParam.showDebugBox !== undefined) {
                 settings.showDebugBox = settingsParam.showDebugBox;
@@ -104,15 +112,26 @@ var HuddleCanvas = (function() {
             if (settingsParam.useTiles !== undefined) {
                 settings.useTiles = settingsParam.useTiles;
             }
+            if (settingsParam.maxScale !== undefined) {
+                settings.maxScale = settingsParam.maxScale;
+            }
+            if (settingsParam.minScale !== undefined) {
+                settings.minScale = settingsParam.minScale;
+            }
         }
 
+        //connect to huddle
         huddle.connect(computerVisionServer, computerVisionPort);
+        //get the subscription for shared panning collection
         sessionServer = computerVisionServer + computerVisionPort;
         PanPosition = HuddleCanvasCollections.getPanPositions();
         checkSubscription();
+
         return this;
     }
 
+
+    //various getters
     function publicGetHuddleSessionServer() {
         return sessionServer;
     }
@@ -168,6 +187,7 @@ var HuddleCanvas = (function() {
 
     }
 
+    //used to apply a css property to an element with all browser prefixes
     function applyAllBrowsers(element, action, parameters) {
         var browserPrefixes = [
             "-o-",
@@ -183,6 +203,7 @@ var HuddleCanvas = (function() {
     }
 
 
+    //functions returned in the HuddleCanvas object to allow writing to the debug box
     function publicDebugWrite(message) {
         $(document).ready(function() {
             if (document.getElementById('debug-box')) {
@@ -199,8 +220,8 @@ var HuddleCanvas = (function() {
         });
     }
 
+    //takes an angle and makes it fit CSS angle i.e 0-180, 0- -180
     function boundAngle(input) {
-        //takes an angle and makes it fit CSS angle i.e 0-180, 0- -180
         if (input > 180) {
             input = -(360 - input);
         } else if (input < -180) {
@@ -209,8 +230,8 @@ var HuddleCanvas = (function() {
         return input;
     }
 
+    //get current angle of the element
     function getCanvasAngle() {
-        //get current angle of the element
         //thanks to http://css-tricks.com/get-value-of-css-rotation-through-javascript/
         var el = document.getElementById(huddleContainerId);
         var st = window.getComputedStyle(el, null);
@@ -241,12 +262,12 @@ var HuddleCanvas = (function() {
         return existingAngle__;
     }
 
+    //This is where the magic happens :)
     function loadCanvas() {
         $(document).ready(function() {
 
 
-            //choose whether to show the debug box or not
-
+            //show debug box if it's turned on
             if (settings.showDebugBox) {
                 $('body').prepend("<div id='debug-box'>DEBUG MESSAGES WILL APPEAR HERE</div>");
                 $("#debug-box").css({
@@ -268,6 +289,7 @@ var HuddleCanvas = (function() {
             }
 
 
+            //add a touch overlay to ensure our panning works nicely
             $('#' + huddleContainerId).prepend("<div id=\"touchoverlay\" style=\"z-index:1;\"></div>");
             settings.layers.push('touchoverlay');
 
@@ -331,6 +353,7 @@ var HuddleCanvas = (function() {
                         'z-index': 0
                     })
 
+                    //set up the tiles if they're being used
                     if (settings.useTiles) {
 
                         for (var y = 0; y < imageHeight; y += tileHeight) {
@@ -347,7 +370,9 @@ var HuddleCanvas = (function() {
                                 });
                             }
                         }
-                    } else {
+                    }
+                    //if not just prepare conventional background
+                    else {
                         $("#huddle-canvas-background").css('background-repeat', 'no-repeat');
                         $("#huddle-canvas-background").css('z-index', 0);
                         $("#huddle-canvas-background").css('background-image', 'url(' + settings.imgSrcPath + ')');
@@ -357,7 +382,7 @@ var HuddleCanvas = (function() {
 
                     }
 
-
+                    //finally add our background layer to the list of layers
                     settings.layers.push("huddle-canvas-background");
 
                     //get all the layers including background
@@ -428,7 +453,6 @@ var HuddleCanvas = (function() {
                         }
                         //if we don't, create one
                         else {
-                            ////console.log("FINAL ROTATION BECOMES 0");
                             sessionOffsetId = PanPosition.insert({
                                 sessionId: sessionServer,
                                 offsetX: 0,
@@ -487,16 +511,6 @@ var HuddleCanvas = (function() {
                 var containerWidth = $('#' + huddleContainerId).width() / 2;
                 var containerHeight = $('#' + huddleContainerId).height() / 2;
 
-                //scale the canvas according to the device's size (ensures e.g iphone canvas is same physical size as surface pro canvas)
-                //then scale the canvas for our scale offset
-                /* var scale = 'scale(' + scaleX + ',' + scaleY + ') ' +
-                    'translate(' + (-(containerWidth - scaleOffsetX)) + 'px,' + (-(containerHeight - scaleOffsetY)) + 'px)' +
-                    'scale(' + scaleOffset + ',' + scaleOffset + ')' +
-                    'translate(' + ((containerWidth - scaleOffsetX)) + 'px,' + ((containerHeight - scaleOffsetY)) + 'px)';
-                applyAllBrowsers(id, 'transform', scale);*/
-
-
-
 
                 //set the offset of the canvas so its physical position changes
                 coordX = txd;
@@ -511,34 +525,8 @@ var HuddleCanvas = (function() {
                 var rotationX = -tx;
                 var rotationY = -ty;
 
-                /* d3.select("#testlayer").append("circle")
-                    .attr("cx", rotationX)
-                    .attr("cy", rotationY)
-                    .attr("r", 10)
-                    .style("fill", "red");
 
-                d3.select("#testlayer").append("circle")
-                    .attr("cx", rotationOffsetX)
-                    .attr("cy", rotationOffsetY)
-                    .attr("r", 10)
-                    .style("fill", "steelblue");
-
-                d3.select("#testlayer").append("circle")
-                    .attr("cx", $('#' + huddleContainerId).width() / 2)
-                    .attr("cy", $('#' + huddleContainerId).height() / 2)
-                    .attr("r", 10)
-                    .style("fill", "green"); */
-
-                ////console.log("rotationOffset: " + move_rotationOffset + " || finalRotationOffset: " + move_finalRotationOffset);
-
-                /*d3.select("#testlayer").append("circle")
-                    .attr("cx", scaleOffsetX)
-                    .attr("cy", scaleOffsetY)
-                    .attr("r", 10)
-                    .style("fill", "green");*/
-
-
-
+                //apply correct transformation string to huddle-canvas-container according to which transformations are enabled
                 if (settings.rotationEnabled && settings.scalingEnabled) {
                     var transformation =
                         'scale(' + scaleX + ',' + scaleY + ') ' +
@@ -587,13 +575,6 @@ var HuddleCanvas = (function() {
                 }
 
 
-                //rotation offset from touch
-                //existingCanvasAngle = getCanvasAngle();
-                /*canvas.debugWrite("rotationOffset: " + rotationOffset);
-                applyAllBrowsers(id, 'transform-origin', rotationOffsetX + 'px ' + rotationOffsetY + 'px');
-                applyAllBrowsers(id, 'transform', 'rotate(' + (rotationOffset) + 'deg)');*/
-
-
             }
 
 
@@ -614,7 +595,6 @@ var HuddleCanvas = (function() {
 
                 totalRotation = angle + rotationOffset + finalRotationOffset;
                 totalRotation = boundAngle(totalRotation);
-                //canvas.debugWrite(totalRotation);
 
                 //set feed width and height
                 feedWidth = ratio.X * windowWidth;
@@ -671,8 +651,6 @@ var HuddleCanvas = (function() {
                 //uodate the metadata to allow proper viewing on iOS devices
 
                 window.peepholeMetadata = {
-                    //canvasWidth: feedWidth,
-                    //canvasHeight: feedHeight,
                     scaleX: 1 / (ratio.X / window.canvasScaleFactor),
                     scaleY: 1 / (ratio.Y / window.canvasScaleFactor)
                 };
@@ -696,7 +674,6 @@ var HuddleCanvas = (function() {
                         sessionId: sessionServer
                     });
                     if (!doc) {
-                        ////console.log("FINAL ROTATION BECOMES 0");
                         sessionOffsetId = PanPosition.insert({
                             sessionId: sessionServer,
                             offsetX: 0,
@@ -715,7 +692,6 @@ var HuddleCanvas = (function() {
                     } else {
                         sessionOffsetId = doc._id;
                     }
-                    ////console.log(sessionOffsetId);
                 }
 
                 var hammerCanvas = document.getElementsByTagName("body")[0];
@@ -732,7 +708,6 @@ var HuddleCanvas = (function() {
                 hammertime.on('pan rotate pinch', function(ev) {
                     ev.preventDefault();
 
-                    ////console.log(ev);
 
                     //we don't pan if the pan lock is on
                     if (panLocked == true) {
@@ -745,19 +720,36 @@ var HuddleCanvas = (function() {
                     inPanOffsetX = (Math.cos(angle) * dx) - (Math.sin(angle) * dy);
                     inPanOffsetY = (Math.sin(angle) * dx) + (Math.cos(angle) * dy);
 
-                    ////canvas.debugWrite(ev.type);
+                    //handle the pinch zoom stuff
                     if (ev.type == "pinch") {
-                        ////console.log(ev);
                         scaleOffset = ev.scale;
-                        scaleOffsetX = ev.center.x + (-publicGetOffsets()[0]);
-                        scaleOffsetY = ev.center.y + (-publicGetOffsets()[1]);
 
+                        scaleOffsetX = ev.center.x + (-publicGetOffsets()[0])
+                        scaleOffsetY = ev.center.y + (-publicGetOffsets()[1])
 
+                        var maxScale = settings.maxScale;
+                        var minScale = settings.minScale;
+
+                        //limit the scale offsets for max and min scale
                         if (ev.srcEvent.type == "touchend") {
-                            ////console.log("end pinch");
-                            finalScaleOffset = finalScaleOffset * ev.scale;
+                            finalScaleOffset = finalScaleOffset * scaleOffset;
                             scaleOffset = 1;
+                            if (finalScaleOffset > maxScale) {
+                                finalScaleOffset = maxScale;
+                            }
+                            if (finalScaleOffset < minScale) {
+                                finalScaleOffset = minScale;
+                            }
+                        } else {
+                            if (finalScaleOffset * scaleOffset > maxScale) {
+                                scaleOffset = maxScale / finalScaleOffset;
+                            }
+                            if (finalScaleOffset * scaleOffset < minScale) {
+                                scaleOffset = minScale / finalScaleOffset;
+                            }
                         }
+
+                        //save our scale values
                         PanPosition.update(sessionOffsetId, {
                             $set: {
                                 scaleOffset: scaleOffset,
@@ -772,27 +764,17 @@ var HuddleCanvas = (function() {
 
                     if (ev.rotation) {
                         var eventRotation = ev.rotation;
-                        ////console.log(ev);
 
-                        //eventRotation = boundAngle(eventRotation);
-
-                        //canvas.debugWrite(Math.abs(rotationOffset - eventRotation));
-                        //canvas.debugAppend("rotationOffset: " + rotationOffset);
-                        //canvas.debugAppend("ev.rotation: " + eventRotation);
                         //little hack to fix some of hammer's stupid bugginess
                         if ((!(Math.abs(rotationOffset - eventRotation) > 10)) || Math.abs(eventRotation) < 10 || (!(Math.abs(Math.abs(rotationOffset) - Math.abs(eventRotation)) > 10))) {
                             rotationOffset = eventRotation;
-                            //canvas.debugAppend(ev.isFirst);
                         }
                         var rotation_rad = (totalRotation * Math.PI) / 180.0;
                         rotationOffsetX = ev.center.x + (-publicGetOffsets()[0]);
                         rotationOffsetY = ev.center.y + (-publicGetOffsets()[1]);
-                        ////canvas.debugWrite(rotationOffset);
-                        ////canvas.debugAppend(rotationOffsetX);
-                        ////canvas.debugAppend(rotationOffsetY);
+
 
                         if (ev.srcEvent.type == "touchend" && rotationOffset != 0) {
-                            ////console.log("end rotate");
                             finalRotationOffset += rotationOffset;
                             finalRotationOffset = boundAngle(finalRotationOffset);
                             rotationOffset = 0;
@@ -819,7 +801,6 @@ var HuddleCanvas = (function() {
                         }
                     });
 
-                    ////console.log(PanPosition.findOne(sessionOffsetId));
 
                     if (ev.isFinal) {
                         //update our current offset to mirror others in the huddle
@@ -858,7 +839,6 @@ var HuddleCanvas = (function() {
             //Prevents elastic scrolling on iOS
             //stolen from https://gist.github.com/amolk/1599412
             document.body.addEventListener('touchmove', function(event) {
-                ////console.log(event.source);
                 event.preventDefault();
             }, false);
 
@@ -874,6 +854,7 @@ var HuddleCanvas = (function() {
 
     }
 
+    //the HuddleCanvas object with publicly accessible functions
     return {
         create: publicInit,
         debugAppend: publicDebugAppend,
