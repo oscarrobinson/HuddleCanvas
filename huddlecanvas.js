@@ -89,8 +89,18 @@ var HuddleCanvas = (function() {
             if (settingsParam.backgroundImage !== undefined) {
                 settings.imgSrcPath = settingsParam.backgroundImage;
             }
+            if (settingsParam.scalingEnabled !== undefined) {
+                settings.scalingEnabled = settingsParam.scalingEnabled;
+            }
+            if (settingsParam.rotationEnabled !== undefined) {
+                settings.rotationEnabled = settingsParam.rotationEnabled;
+            }
             if (settingsParam.panningEnabled !== undefined) {
                 settings.panningEnabled = settingsParam.panningEnabled;
+                if (!settingsParam.panningEnabled) {
+                    settings.scalingEnabled = false;
+                    settings.rotationEnabled = false;
+                }
             }
             if (settingsParam.layers !== undefined) {
                 for (var u = 0; u < settingsParam.layers.length; u++) {
@@ -102,12 +112,6 @@ var HuddleCanvas = (function() {
             }
             if (settingsParam.onMoveCallback !== undefined) {
                 settings.onMoveCallback = settingsParam.onMoveCallback;
-            }
-            if (settingsParam.scalingEnabled !== undefined) {
-                settings.scalingEnabled = settingsParam.scalingEnabled;
-            }
-            if (settingsParam.rotationEnabled !== undefined) {
-                settings.rotationEnabled = settingsParam.rotationEnabled;
             }
             if (settingsParam.useTiles !== undefined) {
                 settings.useTiles = settingsParam.useTiles;
@@ -526,48 +530,27 @@ var HuddleCanvas = (function() {
                 var rotationY = -ty;
 
 
-                //apply correct transformation string to huddle-canvas-container according to which transformations are enabled
-                if (settings.rotationEnabled && settings.scalingEnabled) {
-                    var transformation =
-                        'scale(' + scaleX + ',' + scaleY + ') ' +
-                        'translate(' + (-(containerWidth - move_scaleOffsetX)) + 'px,' + (-(containerHeight - move_scaleOffsetY)) + 'px)' +
-                        'scale(' + move_scaleOffset * move_finalScaleOffset + ',' + move_scaleOffset * move_finalScaleOffset + ')' +
-                        'translate(' + ((containerWidth - move_scaleOffsetX)) + 'px,' + ((containerHeight - move_scaleOffsetY)) + 'px)' +
-                        'translate(' + (-(containerWidth - rotationX)) + 'px,' + (-(containerHeight - rotationY)) + 'px)' +
-                        'rotate(' + (-(rotation)) + 'deg)' +
-                        'translate(' + (containerWidth - rotationX) + 'px,' + (containerHeight - rotationY) + 'px)' +
-                        'translate(' + (-(containerWidth - move_rotationOffsetX)) + 'px,' + (-(containerHeight - move_rotationOffsetY)) + 'px)' +
+                //Apply the transformations according to what settings are enabled
+                var transformationString = 'translate(' + (-(containerWidth - rotationX)) + 'px,' + (-(containerHeight - rotationY)) + 'px)' +
+                    'rotate(' + (-(rotation)) + 'deg)' +
+                    'translate(' + (containerWidth - rotationX) + 'px,' + (containerHeight - rotationY) + 'px)';
+
+                if (settings.rotationEnabled) {
+                    transformationString += 'translate(' + (-(containerWidth - move_rotationOffsetX)) + 'px,' + (-(containerHeight - move_rotationOffsetY)) + 'px)' +
                         'rotate(' + (move_rotationOffset + move_finalRotationOffset) + 'deg)' +
                         'translate(' + (containerWidth - move_rotationOffsetX) + 'px,' + (containerHeight - move_rotationOffsetY) + 'px)';
-                    applyAllBrowsers(id, 'transform', transformation);
-                } else if (settings.rotationEnabled && !settings.scalingEnabled) {
-                    var transformation =
-                        'scale(' + scaleX + ',' + scaleY + ') ' +
-                        'translate(' + (-(containerWidth - rotationX)) + 'px,' + (-(containerHeight - rotationY)) + 'px)' +
-                        'rotate(' + (-(rotation)) + 'deg)' +
-                        'translate(' + (containerWidth - rotationX) + 'px,' + (containerHeight - rotationY) + 'px)' +
-                        'translate(' + (-(containerWidth - move_rotationOffsetX)) + 'px,' + (-(containerHeight - move_rotationOffsetY)) + 'px)' +
-                        'rotate(' + (move_rotationOffset + move_finalRotationOffset) + 'deg)' +
-                        'translate(' + (containerWidth - move_rotationOffsetX) + 'px,' + (containerHeight - move_rotationOffsetY) + 'px)';
-                    applyAllBrowsers(id, 'transform', transformation);
-                } else if (settings.scalingEnabled && !settings.rotationEnabled) {
-                    var transformation =
-                        'scale(' + scaleX + ',' + scaleY + ') ' +
-                        'translate(' + (-(containerWidth - move_scaleOffsetX)) + 'px,' + (-(containerHeight - move_scaleOffsetY)) + 'px)' +
-                        'scale(' + move_scaleOffset * move_finalScaleOffset + ',' + move_scaleOffset * move_finalScaleOffset + ')' +
-                        'translate(' + ((containerWidth - move_scaleOffsetX)) + 'px,' + ((containerHeight - move_scaleOffsetY)) + 'px)' +
-                        'translate(' + (-(containerWidth - rotationX)) + 'px,' + (-(containerHeight - rotationY)) + 'px)' +
-                        'rotate(' + (-(rotation)) + 'deg)' +
-                        'translate(' + (containerWidth - rotationX) + 'px,' + (containerHeight - rotationY) + 'px)';
-                    applyAllBrowsers(id, 'transform', transformation);
-                } else {
-                    var transformation =
-                        'scale(' + scaleX + ',' + scaleY + ') ' +
-                        'translate(' + (-(containerWidth - rotationX)) + 'px,' + (-(containerHeight - rotationY)) + 'px)' +
-                        'rotate(' + (-(rotation)) + 'deg)' +
-                        'translate(' + (containerWidth - rotationX) + 'px,' + (containerHeight - rotationY) + 'px)';
-                    applyAllBrowsers(id, 'transform', transformation);
                 }
+
+                transformationString += 'scale(' + scaleX + ',' + scaleY + ') ';
+
+                if (settings.scalingEnabled) {
+                    transformationString += 'translate(' + (-(containerWidth - move_scaleOffsetX)) + 'px,' + (-(containerHeight - move_scaleOffsetY)) + 'px)' +
+                        'scale(' + move_scaleOffset * move_finalScaleOffset + ',' + move_scaleOffset * move_finalScaleOffset + ')' +
+                        'translate(' + ((containerWidth - move_scaleOffsetX)) + 'px,' + ((containerHeight - move_scaleOffsetY)) + 'px)';
+
+                }
+
+                applyAllBrowsers(id, 'transform', transformationString);
 
                 //do on move callback
                 if (!firstRun) {
