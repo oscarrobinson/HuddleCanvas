@@ -172,6 +172,20 @@ var canvas = HuddleCanvas.create([PATH TO YOUR HUDDLE SERVER], [PORT FOR YOUR HU
 });
 ```
 
+Panning has been created so the canvas has some inertia (as users have come to expect from such applications).  If this is not suitable for your application, you can turn it off:
+```javascript
+var canvas = HuddleCanvas.create([PATH TO YOUR HUDDLE SERVER], [PORT FOR YOUR HUDDLE SERVER], "HuddleName", {
+	disableFlickPan: true
+});
+```
+The parameters are set to some optimal values already, however you can change them:
+```javascript
+var canvas = HuddleCanvas.create([PATH TO YOUR HUDDLE SERVER], [PORT FOR YOUR HUDDLE SERVER], "HuddleName", {
+	friction: 0.06,
+	inertia: 200
+});
+```
+
 
 ##Using HuddleCanvas - Callbacks
 
@@ -203,7 +217,10 @@ All the settings available to change when calling the create method are listed h
         rotationEnabled: true,
         useTiles: false,
         maxScale: 4,
-        minScale: 0.4
+        minScale: 0.4,
+        friction: 0.05,
+        inertia: 100,
+        disableFlickPan: false
     }
 ```
 
