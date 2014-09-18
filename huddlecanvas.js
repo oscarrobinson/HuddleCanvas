@@ -48,8 +48,6 @@ var HuddleCanvas = (function() {
     var scaleOffsetY = 0;
 
 
-
-
     //set default values for settings
     var settings = {
         showDebugBox: false,
@@ -62,7 +60,10 @@ var HuddleCanvas = (function() {
         rotationEnabled: true,
         useTiles: false,
         maxScale: 4,
-        minScale: 0.4
+        minScale: 0.4,
+        friction: 0.05,
+        inertia: 100,
+        disableFlickPan: false
     }
 
     //we can't load the canvas until the subscription to the position collection is ready
@@ -121,6 +122,15 @@ var HuddleCanvas = (function() {
             }
             if (settingsParam.minScale !== undefined) {
                 settings.minScale = settingsParam.minScale;
+            }
+            if (settingsParam.inertia !== undefined) {
+                settings.inertia = settingsParam.inertia;
+            }
+            if (settingsParam.friction !== undefined) {
+                settings.friction = settingsParam.friction;
+            }
+            if (settingsParam.disableFlickPan !== undefined) {
+                settings.disableFlickPan = settingsParam.disableFlickPan;
             }
         }
 
@@ -424,7 +434,8 @@ var HuddleCanvas = (function() {
 
 
             //Called on receiving of Huddle API data to move the canvases
-            function moveCanvas(id, x, y, scaleX, scaleY, rotation, ratioX, ratioY, offsetX, offsetY, inPanOffsetX, inPanOffsetY) {
+            function moveCanvas(id, x, y, scaleX, scaleY, ratioX, ratioY, rotation) {
+
                 //work out some values for canvas movement
                 deviceCenterToDeviceLeft = ((feedWidth / ratioX) / 2);
                 deviceCenterToDeviceTop = ((feedHeight / ratioY) / 2);
@@ -631,7 +642,7 @@ var HuddleCanvas = (function() {
                 var scaleX = ((ratio.X * windowWidth) / feedWidth);
                 var scaleY = ((ratio.Y * windowHeight) / feedHeight);
 
-                //uodate the metadata to allow proper viewing on iOS devices
+                //update the metadata to allow proper viewing on iOS devices
 
                 window.peepholeMetadata = {
                     scaleX: 1 / (ratio.X / window.canvasScaleFactor),
@@ -640,7 +651,7 @@ var HuddleCanvas = (function() {
                 window.orientationDevice = angle;
 
                 //update the canvas position
-                moveCanvas("#" + huddleContainerId, x, y, scaleX, scaleY, angle, ratio.X, ratio.Y, offsetX, offsetY, inPanOffsetX, inPanOffsetY);
+                moveCanvas("#" + huddleContainerId, x, y, scaleX, scaleY, ratio.X, ratio.Y, angle);
 
 
 
@@ -688,6 +699,8 @@ var HuddleCanvas = (function() {
                     enable: true
                 });
 
+                var prevTouch;
+
                 hammertime.on('pan rotate pinch', function(ev) {
                     ev.preventDefault();
 
@@ -696,7 +709,6 @@ var HuddleCanvas = (function() {
                     if (panLocked == true) {
                         return;
                     }
-
 
                     publicDebugWrite(currentDeviceAngle);
                     publicDebugAppend(finalScaleOffset * scaleOffset);
@@ -789,6 +801,12 @@ var HuddleCanvas = (function() {
 
 
                     if (ev.isFinal) {
+
+
+                        //handle the inertia of the canvas
+                        var velocityX = prevTouch.velocityX;
+                        var velocityY = prevTouch.velocityY;
+
                         //update our current offset to mirror others in the huddle
                         if (sessionOffsetId !== "") {
                             var offsets = PanPosition.findOne(sessionOffsetId);
@@ -815,10 +833,42 @@ var HuddleCanvas = (function() {
                                 offsetX: offsetX,
                                 offsetY: offsetY
                             }
-                        })
+                        });
+                        if (!settings.disableFlickPan) {
+                            var angle = (currentDeviceAngle * Math.PI) / 180.0;
+                            applyInertia(angle, velocityX, velocityY, sessionOffsetId, 0);
+                        }
+                    }
+                    prevTouch = ev;
+                });
+            }
 
+
+            function applyInertia(angle, velocityXHammer, velocityYHammer, sessionOffsetId, count) {
+
+                var multiplier = 20;
+
+                velocityX = velocityXHammer * multiplier;
+                velocityY = velocityYHammer * multiplier;
+
+                var inertiaMovX = (Math.cos(angle) * velocityX) - (Math.sin(angle) * velocityY);
+                var inertiaMovY = (Math.sin(angle) * velocityX) + (Math.cos(angle) * velocityY);
+
+
+                PanPosition.update(sessionOffsetId, {
+                    $inc: {
+                        offsetX: -inertiaMovX,
+                        offsetY: -inertiaMovY
                     }
                 });
+                count++;
+                if (count < settings.inertia) {
+                    setTimeout(function() {
+                        applyInertia(angle, velocityXHammer / (1 + settings.friction), velocityYHammer / (1 + settings.friction), sessionOffsetId, count)
+                    }, 1);
+                } else {
+                    return;
+                }
             }
 
 

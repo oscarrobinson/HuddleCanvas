@@ -13,7 +13,7 @@ Package.onUse(function(api) {
 
 Package.describe({
     summary: "Create explorable layers for use with Huddle",
-    version: "1.1.0",
+    version: "1.2.0",
     name: "scarrobin:huddlecanvas",
     git: 'https://github.com/scarrobin/HuddleCanvas.git'
 });
