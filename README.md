@@ -27,7 +27,7 @@ HuddleCanvas adds its HTML code to a div with the tag `huddle-canvas-container`,
 </body>
 ```
 
-To ensure your application works properly on all devices, also add these meta tags to the <head> of your document:
+To ensure your application works properly on all devices, also add these meta tags to the head of your document:
 
 ```html
 <meta name="apple-mobile-web-app-capable" content="yes">
