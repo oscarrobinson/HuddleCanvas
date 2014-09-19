@@ -178,11 +178,10 @@ var canvas = HuddleCanvas.create([PATH TO YOUR HUDDLE SERVER], [PORT FOR YOUR HU
 	disableFlickPan: true
 });
 ```
-The parameters are set to some optimal values already, however you can change them:
+The friction parameter is set to an optimal value already, however you can change it:
 ```javascript
 var canvas = HuddleCanvas.create([PATH TO YOUR HUDDLE SERVER], [PORT FOR YOUR HUDDLE SERVER], "HuddleName", {
-	friction: 0.06,
-	inertia: 200
+	friction: 0.06
 });
 ```
 
@@ -219,7 +218,6 @@ All the settings available to change when calling the create method are listed h
         maxScale: 4,
         minScale: 0.4,
         friction: 0.05,
-        inertia: 100,
         disableFlickPan: false
     }
 ```
