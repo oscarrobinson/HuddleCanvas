@@ -27,6 +27,14 @@ HuddleCanvas adds its HTML code to a div with the tag `huddle-canvas-container`,
 </body>
 ```
 
+To ensure your application works properly on all devices, also add these meta tags to the <head> of your document:
+
+```html
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="painting demo">
+<meta name="viewport" content="minimal-ui, width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+```
+
 Then in the corresponding JavaScript for the page:
 ```javascript
 if (Meteor.isClient) {
