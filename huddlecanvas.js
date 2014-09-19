@@ -62,7 +62,6 @@ var HuddleCanvas = (function() {
         maxScale: 4,
         minScale: 0.4,
         friction: 0.05,
-        inertia: 100,
         disableFlickPan: false
     }
 
@@ -122,9 +121,6 @@ var HuddleCanvas = (function() {
             }
             if (settingsParam.minScale !== undefined) {
                 settings.minScale = settingsParam.minScale;
-            }
-            if (settingsParam.inertia !== undefined) {
-                settings.inertia = settingsParam.inertia;
             }
             if (settingsParam.friction !== undefined) {
                 settings.friction = settingsParam.friction;
@@ -836,7 +832,7 @@ var HuddleCanvas = (function() {
                         });
                         if (!settings.disableFlickPan) {
                             var angle = (currentDeviceAngle * Math.PI) / 180.0;
-                            applyInertia(angle, velocityX, velocityY, sessionOffsetId, 0);
+                            applyInertia(angle, velocityX, velocityY, sessionOffsetId);
                         }
                     }
                     prevTouch = ev;
@@ -844,7 +840,7 @@ var HuddleCanvas = (function() {
             }
 
 
-            function applyInertia(angle, velocityXHammer, velocityYHammer, sessionOffsetId, count) {
+            function applyInertia(angle, velocityXHammer, velocityYHammer, sessionOffsetId) {
 
                 var multiplier = 20;
 
@@ -861,10 +857,9 @@ var HuddleCanvas = (function() {
                         offsetY: -inertiaMovY
                     }
                 });
-                count++;
-                if (count < settings.inertia) {
+                if (!(inertiaMovX < 0.01 && inertiaMovY < 0.01)) {
                     setTimeout(function() {
-                        applyInertia(angle, velocityXHammer / (1 + settings.friction), velocityYHammer / (1 + settings.friction), sessionOffsetId, count)
+                        applyInertia(angle, velocityXHammer / (1 + settings.friction), velocityYHammer / (1 + settings.friction), sessionOffsetId)
                     }, 1);
                 } else {
                     return;
