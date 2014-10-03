@@ -44,7 +44,9 @@ if (Meteor.isClient) {
 ```
 This creates an empty explorable canvas.
 
-So as an example using the Huddle-Orbiter:
+<b>Note:</b> The name of the huddle (HuddleName in this example) is something that isn't used by HuddleCanvas but is passed straight to the Huddle API when establishing a connection. It doesn't currently serve any purpose so just put any string, even an empty string will do!  It's just there in case it becomes useful in future versions of the Huddle API.
+
+An example setting up a HuddleCanvas using the Huddle-Orbiter:
 
 ```javascript
 var canvas = HuddleCanvas.create("huddle-orbiter.proxemicinteractions.org", 60000, "HuddleName");
