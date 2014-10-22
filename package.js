@@ -1,19 +1,34 @@
-Package.onUse(function(api) {
-    api.use('jquery@1.0.0', 'client');
-    api.use('mongo@1.0.4', ['client', 'server']);
-    api.imply('jquery@1.0.0', 'client');
-    api.add_files([
-        'hammer.js',
-        'huddlecanvas.js'
-    ], 'client');
-    api.add_files([
-        'positioncollection.js'
-    ], ['server', 'client']);
+Package.describe({
+  name: "huddle:canvas",
+  summary: "Create explorable layers for use with Huddle",
+  version: "1.3.0_1",
+  git: 'https://github.com/scarrobin/HuddleCanvas.git'
 });
 
-Package.describe({
-    summary: "Create explorable layers for use with Huddle",
-    version: "1.3.0",
-    name: "scarrobin:huddlecanvas",
-    git: 'https://github.com/scarrobin/HuddleCanvas.git'
+Package.onUse(function(api) {
+  api.versionsFrom('METEOR@0.9.0');
+
+  // used external packages
+  api.use('jquery@1.0.0', 'client');
+  api.use('mongo@1.0.4');
+
+  // allow to use referenced packages
+  api.imply('jquery@1.0.0', 'client');
+  api.imply('huddle:client', 'client');
+
+  // export objects
+  api.export('panPositionSubscription', 'client');
+  api.export('HuddleCanvasCollections', 'client');
+  api.export('HuddleCanvas', 'client');
+
+  // API files
+  api.addFiles('lib/hammer.js', 'client');
+  api.addFiles('api/huddle:canvas.js', 'client');
+  api.addFiles('api/huddle:canvas-positioncollection.js');
+});
+
+Package.onTest(function(api) {
+  api.use('tinytest');
+  api.use('huddle:canvas');
+  api.addFiles('test/huddle:canvas-tests.js');
 });

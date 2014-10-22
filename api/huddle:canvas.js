@@ -1,4 +1,4 @@
-var HuddleCanvas = (function() {
+HuddleCanvas = (function() {
     var huddle;
     var sessionServer;
     var PanPosition;
@@ -78,8 +78,8 @@ var HuddleCanvas = (function() {
     }
 
     //called on HuddleCanvas.create(...)
-    function publicInit(computerVisionServer, computerVisionPort, huddleName, settingsParam) {
-        huddle = Huddle.client(huddleName);
+    function publicInit(computerVisionServer, computerVisionPort, settingsParam) {
+        huddle = Huddle.client();
 
         //get our settings values
         if (settingsParam != undefined) {
@@ -903,6 +903,3 @@ var HuddleCanvas = (function() {
         getTotalScale: publicGetTotalScale
     }
 })();
-
-//Make HuddleCanvas globally available
-window.HuddleCanvas = HuddleCanvas;

@@ -2,86 +2,94 @@
   "dependencies": [
     [
       "application-configuration",
-      "1.0.2-rc0"
+      "1.0.3"
+    ],
+    [
+      "base64",
+      "1.0.1"
     ],
     [
       "binary-heap",
-      "1.0.0"
+      "1.0.1"
     ],
     [
       "callback-hook",
-      "1.0.0"
+      "1.0.1"
     ],
     [
       "check",
-      "1.0.0"
+      "1.0.2"
     ],
     [
       "ddp",
-      "1.0.8-rc0"
+      "1.0.10"
     ],
     [
       "ejson",
-      "1.0.0"
-    ],
-    [
-      "follower-livedata",
-      "1.0.1-rc0"
-    ],
-    [
-      "geojson-utils",
-      "1.0.0"
-    ],
-    [
-      "id-map",
-      "1.0.0"
-    ],
-    [
-      "jquery",
-      "1.0.0"
-    ],
-    [
-      "json",
-      "1.0.0"
-    ],
-    [
-      "logging",
-      "1.0.0"
-    ],
-    [
-      "meteor",
-      "1.0.2-cordova1"
-    ],
-    [
-      "minimongo",
-      "1.0.2-glasser1"
-    ],
-    [
-      "mongo",
       "1.0.4"
     ],
     [
+      "follower-livedata",
+      "1.0.2"
+    ],
+    [
+      "geojson-utils",
+      "1.0.1"
+    ],
+    [
+      "huddle:client",
+      "0.9.14"
+    ],
+    [
+      "id-map",
+      "1.0.1"
+    ],
+    [
+      "jquery",
+      "1.0.1"
+    ],
+    [
+      "json",
+      "1.0.1"
+    ],
+    [
+      "logging",
+      "1.0.4"
+    ],
+    [
+      "meteor",
+      "1.1.2"
+    ],
+    [
+      "minimongo",
+      "1.0.4"
+    ],
+    [
+      "mongo",
+      "1.0.7"
+    ],
+    [
       "ordered-dict",
-      "1.0.0"
+      "1.0.1"
     ],
     [
       "random",
-      "1.0.0"
+      "1.0.1"
     ],
     [
       "retry",
-      "1.0.0"
+      "1.0.1"
     ],
     [
       "tracker",
-      "1.0.2-rc0"
+      "1.0.3"
     ],
     [
       "underscore",
-      "1.0.0"
+      "1.0.1"
     ]
   ],
   "pluginDependencies": [],
-  "toolVersion": "meteor-tool@1.0.31",
+  "toolVersion": "meteor-tool@1.0.34",
   "format": "1.0"
 }
