@@ -1,7 +1,7 @@
 Package.describe({
   name: "huddle:canvas",
   summary: "Create explorable layers for use with Huddle",
-  version: "1.3.0_1",
+  version: "1.3.0_2",
   git: 'https://github.com/scarrobin/HuddleCanvas.git'
 });
 
@@ -17,7 +17,7 @@ Package.onUse(function(api) {
   api.imply('jquery@1.0.0', 'client');
 
   // export objects
-  api.export('panPositionSubscription', 'client');
+  api.export('HuddlePanPositionSubscription', 'client');
   api.export('HuddleCanvasCollections', 'client');
   api.export('HuddleCanvas', 'client');
 

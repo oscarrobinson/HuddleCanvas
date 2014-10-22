@@ -12,7 +12,7 @@ HuddleCanvasCollections = (function() {
 })();
 
 if (Meteor.isClient) {
-    panPositionSubscription = Meteor.subscribe('huddle-pan-position');
+    HuddlePanPositionSubscription = Meteor.subscribe('huddle-pan-position');
 }
 
 if (Meteor.isServer) {

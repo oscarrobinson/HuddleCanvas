@@ -89,7 +89,7 @@ An explorable image is cool but what if you want to add some information to be o
 ```
 to pass a layer to the canvas:
 ```javascript
-var canvas = HuddleCanvas.create("huddle-orbiter.proxemicinteractions.org", 60000, {
+var canvas = HuddleCanvas.create([PATH TO YOUR HUDDLE SERVER], [PORT FOR YOUR HUDDLE SERVER], {
 		layers: ["testlayer"] //you list all the div IDs of the layers you want to add here
 	});
 ```
@@ -122,7 +122,7 @@ You can also add and remove layers to your canvas dynamically.  You define the l
 </div>
 ```
 ```javascript
-var canvas = HuddleCanvas.create("huddle-orbiter.proxemicinteractions.org", 60000, {
+var canvas = HuddleCanvas.create([PATH TO YOUR HUDDLE SERVER], [PORT FOR YOUR HUDDLE SERVER], {
 		layers: ["layer1"]
 	});
 ```

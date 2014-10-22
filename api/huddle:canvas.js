@@ -68,10 +68,11 @@ HuddleCanvas = (function() {
     //we can't load the canvas until the subscription to the position collection is ready
     //this function keeps checking until it is ready
     function checkSubscription() {
-        if (window.panPositionSubscription.ready()) {
+        if (window.HuddlePanPositionSubscription.ready()) {
             loadCanvas()
-        } else {
-            setTimeout(function() {
+        }
+        else {
+            Meteor.setTimeout(function() {
                 checkSubscription()
             }, 10);
         }
