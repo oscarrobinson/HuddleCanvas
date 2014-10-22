@@ -11,10 +11,10 @@ Package.onUse(function(api) {
   // used external packages
   api.use('jquery@1.0.0', 'client');
   api.use('mongo@1.0.4');
+  api.use('huddle:client@0.9.14', 'client');
 
   // allow to use referenced packages
   api.imply('jquery@1.0.0', 'client');
-  api.imply('huddle:client', 'client');
 
   // export objects
   api.export('panPositionSubscription', 'client');
