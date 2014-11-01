@@ -1,7 +1,7 @@
 Package.describe({
   name: "huddle:canvas",
   summary: "Create explorable layers for use with Huddle",
-  version: "1.3.0_2",
+  version: "1.3.0_3",
   git: 'https://github.com/scarrobin/HuddleCanvas.git'
 });
 

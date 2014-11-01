@@ -78,7 +78,7 @@ var canvas = HuddleCanvas.create([PATH TO YOUR HUDDLE SERVER], [PORT FOR YOUR HU
 
 ## Using HuddleCanvas - Adding Layers
 
-An explorable image is cool but what if you want to add some information to be overlaid on the image.  Well this is where HuddleCanvas layers come in.  Adding a layer to your canvas is as simple as adding a div inside the huddle-canvas-container div and passing it to the canvas when the canvas is initialised:
+An explorable image is cool but what if you want to add some information to be overlaid on the image.  Well this is where HuddleCanvas layers come in. Adding a layer to your canvas is as simple as adding a div inside the huddle-canvas-container div and passing it to the canvas when the canvas is initialised:
 
 ```html
 <div id="huddle-canvas-container">
@@ -219,6 +219,7 @@ All the settings available to change when calling the create method are listed h
 
 ```javascript
     var settings = {
+        containerId: "<ID OF CONTAINER DIV ELEMENT>",
         showDebugBox: false,
         panningEnabled: true,
         imgSrcPath: "",
